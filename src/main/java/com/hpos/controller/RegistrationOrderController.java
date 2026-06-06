@@ -1,5 +1,6 @@
 package com.hpos.controller;
 
+import com.hpos.common.PageResult;
 import com.hpos.dto.ApiResponse;
 import com.hpos.dto.RegistrationRequest;
 import com.hpos.dto.RegistrationVO;
@@ -7,7 +8,6 @@ import com.hpos.service.RegistrationOrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 /**
  * 挂号订单 API —— 前端的「提交挂号」「我的挂号」「取消挂号」都走这里
@@ -91,9 +91,12 @@ public class RegistrationOrderController {
      * @param patientId 患者ID（目前写死为1，后续接入登录后从 token 获取）
      */
     @GetMapping
-    public ApiResponse<List<RegistrationVO>> getOrders(@RequestParam Integer patientId) {
-        List<RegistrationVO> orders = orderService.getPatientOrders(patientId);
-        return ApiResponse.success(orders);
+    public ApiResponse<PageResult<RegistrationVO>> getOrders(
+            @RequestParam Integer patientId,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "20") int size) {
+        PageResult<RegistrationVO> result = orderService.getPatientOrders(patientId, page, size);
+        return ApiResponse.success(result);
     }
 
     /**

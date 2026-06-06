@@ -1,39 +1,29 @@
 <template>
   <div id="app">
-    <Header />
+    <Header v-if="showNav" />
     <main>
-      <RegistrationForm />
+      <router-view />
     </main>
-    <Footer />
+    <Footer v-if="showNav" />
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue';
-import RegistrationForm from './components/RegistrationForm.vue';
-import Footer from './components/Footer.vue';
+import Header from './components/Header.vue'
+import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
-  components: {
-    Header,
-    RegistrationForm,
-    Footer
-  }
+  components: { Header, Footer },
+  computed: {
+    showNav() {
+      return this.$route.path !== '/login'
+    },
+  },
 }
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f5f7fa;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f5f7fa; }
 </style>

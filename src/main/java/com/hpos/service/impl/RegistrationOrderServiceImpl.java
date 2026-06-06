@@ -1,13 +1,18 @@
 package com.hpos.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hpos.common.PageResult;
 import com.hpos.entity.*;
 import com.hpos.mapper.RegistrationOrderMapper;
 import com.hpos.service.*;
 import com.hpos.dto.RegistrationRequest;
 import com.hpos.dto.RegistrationVO;
-import com.hpos.utils.OrderNoGenerator;
+import com.hpos.common.OrderNoGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +42,8 @@ public class RegistrationOrderServiceImpl
         extends ServiceImpl<RegistrationOrderMapper, RegistrationOrder>
         implements RegistrationOrderService {
 
+    private static final Logger log = LoggerFactory.getLogger(RegistrationOrderServiceImpl.class);
+
     @Autowired
     private PatientService patientService;
 
@@ -48,6 +55,9 @@ public class RegistrationOrderServiceImpl
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private OrderNotificationService notificationService;
 
     /**
      * 创建挂号订单 —— 核心业务，包含完整的事务控制
@@ -114,8 +124,22 @@ public class RegistrationOrderServiceImpl
         order.setWorkDate(LocalDate.parse(request.getWorkDate()));
         order.setPeriod(request.getPeriod());
         order.setFee(source.getFee());
-        order.setStatus(0); // 0=待支付（后续接入支付功能后改为已支付）
+        order.setStatus(0); // 0=待支付
+        order.setPatientName(patient.getRealName());
         this.save(order);
+
+        try {
+            Doctor doctor = doctorService.getById(request.getDoctorId());
+            notificationService.sendOrderSuccessNotification(
+                    order.getOrderNo(),
+                    patient.getRealName(),
+                    doctor != null ? doctor.getRealName() : "",
+                    request.getWorkDate(),
+                    request.getPeriod() == 1 ? "上午" : "下午"
+            );
+        } catch (Exception e) {
+            log.warn("发送通知失败（不影响主流程）: {}", e.getMessage());
+        }
 
         return order.getOrderNo();
     }
@@ -138,50 +162,51 @@ public class RegistrationOrderServiceImpl
      * @return 挂号记录列表（按就诊日期倒序，最新的在最上面）
      */
     @Override
-    public List<RegistrationVO> getPatientOrders(Integer patientId) {
-        // 查询该患者的所有订单，按就诊日期倒序 + 创建时间倒序
+    public PageResult<RegistrationVO> getPatientOrders(Integer patientId, int page, int size) {
         LambdaQueryWrapper<RegistrationOrder> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RegistrationOrder::getPatientId, patientId)
                .orderByDesc(RegistrationOrder::getWorkDate)
                .orderByDesc(RegistrationOrder::getCreateTime);
 
-        List<RegistrationOrder> orders = this.list(wrapper);
+        IPage<RegistrationOrder> pageResult = this.page(new Page<>(page, size), wrapper);
 
-        // 组装前端展示用的 VO
         List<RegistrationVO> voList = new ArrayList<>();
-        for (RegistrationOrder order : orders) {
-            RegistrationVO vo = new RegistrationVO();
-            vo.setId(order.getId());
-            vo.setOrderNo(order.getOrderNo());
-            vo.setWorkDate(order.getWorkDate());
-            vo.setPeriodText(order.getPeriod() == 1 ? "上午" : "下午");
-            vo.setFee(order.getFee());
-            vo.setStatus(order.getStatus());
-            vo.setCreateTime(order.getCreateTime());
-
-            // Java 14+ switch 表达式，将数字状态转为中文
-            String statusText = switch (order.getStatus()) {
-                case 0 -> "待支付";
-                case 1 -> "已支付";
-                case 2 -> "已取消";
-                case 3 -> "已就诊";
-                default -> "未知";
-            };
-            vo.setStatusText(statusText);
-
-            // 关联查询医生和科室（每次循环查一次，小数据量没问题）
-            Doctor doctor = doctorService.getById(order.getDoctorId());
-            if (doctor != null) {
-                vo.setDoctorName(doctor.getRealName());
-                vo.setDoctorTitle(doctor.getTitle());
-                // 通过医生的 deptId 查科室中文名
-                Department dept = departmentService.getById(doctor.getDeptId());
-                vo.setDeptName(dept != null ? dept.getDeptName() : "");
-            }
-
-            voList.add(vo);
+        for (RegistrationOrder order : pageResult.getRecords()) {
+            voList.add(buildVO(order));
         }
-        return voList;
+
+        return new PageResult<>(voList, pageResult.getTotal(), (int) pageResult.getCurrent(),
+                (int) pageResult.getSize(), pageResult.getPages());
+    }
+
+    private RegistrationVO buildVO(RegistrationOrder order) {
+        RegistrationVO vo = new RegistrationVO();
+        vo.setId(order.getId());
+        vo.setOrderNo(order.getOrderNo());
+        vo.setPatientName(order.getPatientName());
+        vo.setWorkDate(order.getWorkDate());
+        vo.setPeriodText(order.getPeriod() == 1 ? "上午" : "下午");
+        vo.setFee(order.getFee());
+        vo.setStatus(order.getStatus());
+        vo.setCreateTime(order.getCreateTime());
+
+        String statusText = switch (order.getStatus()) {
+            case 0 -> "待支付";
+            case 1 -> "已支付";
+            case 2 -> "已取消";
+            case 3 -> "已就诊";
+            default -> "未知";
+        };
+        vo.setStatusText(statusText);
+
+        Doctor doctor = doctorService.getById(order.getDoctorId());
+        if (doctor != null) {
+            vo.setDoctorName(doctor.getRealName());
+            vo.setDoctorTitle(doctor.getTitle());
+            Department dept = departmentService.getById(doctor.getDeptId());
+            vo.setDeptName(dept != null ? dept.getDeptName() : "");
+        }
+        return vo;
     }
 
     /**

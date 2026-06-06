@@ -1,6 +1,8 @@
 package com.hpos.common;
 
 import com.hpos.dto.ApiResponse;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,9 +22,24 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<Void> handleValidation(MethodArgumentNotValidException e) {
-        // 获取第一条校验失败消息
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         return ApiResponse.error(400, message);
+    }
+
+    /**
+     * 捕获 Spring Security 认证异常（未登录/Token 无效）
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ApiResponse<Void> handleAuthentication(AuthenticationException e) {
+        return ApiResponse.error(401, "未登录或 Token 已过期");
+    }
+
+    /**
+     * 捕获 Spring Security 权限异常（无权访问）
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ApiResponse<Void> handleAccessDenied(AccessDeniedException e) {
+        return ApiResponse.error(403, "无权访问");
     }
 
     /**

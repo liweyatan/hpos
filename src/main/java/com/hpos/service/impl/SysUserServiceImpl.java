@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hpos.entity.SysUser;
 import com.hpos.mapper.SysUserMapper;
 import com.hpos.service.SysUserService;
-import com.hpos.utils.MD5Utils;
+import com.hpos.common.MD5Utils;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,6 +1,5 @@
 package com.hpos.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.hpos.dto.ApiResponse;
 import com.hpos.entity.Department;
 import com.hpos.service.DepartmentService;
@@ -29,7 +28,7 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     /**
-     * 获取所有正常运营的科室
+     * 获取所有正常运营的科室（带 Redis 缓存）
      * 
      * <h4>返回：</h4>
      * <pre>
@@ -40,14 +39,11 @@ public class DepartmentController {
      * ]
      * </pre>
      * 
-     * 只返回 status=1（正常）的科室，按 sort_order 升序排列。
+     * 数据缓存 30 分钟，减少数据库查询
      */
     @GetMapping
     public ApiResponse<List<Department>> list() {
-        LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Department::getStatus, 1)
-               .orderByAsc(Department::getSortOrder);
-        List<Department> list = departmentService.list(wrapper);
+        List<Department> list = departmentService.list();
         return ApiResponse.success(list);
     }
 

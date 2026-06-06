@@ -1,45 +1,52 @@
 # ============================================
-# 智慧医院挂号系统 - 应用配置文件
+# 智慧医院挂号系统 - 基础配置
 # ============================================
+spring:
+  profiles:
+    active: dev
+  application:
+    name: hpos
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  quartz:
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: HposScheduler
+          threadPool:
+            threadCount: 5
 
-# 服务器配置
 server:
   port: 8080
 
-# Spring 配置
-spring:
-  application:
-    name: hpos
+jwt:
+  secret: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkw
+  expiration: 86400000
 
-  # ========== 数据源配置（MySQL） ==========
-  datasource:
-    url: jdbc:mysql://localhost:3306/hospital_system?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-# ========== 日志配置 ==========
-logging:
-  level:
-    com.hpos.mapper: warn
-    com.hpos: info
-
-# ========== MyBatis-Plus 配置 ==========
 mybatis-plus:
-  # mapper.xml 文件位置（如果使用 XML 方式）
   mapper-locations: classpath*:mapper/**/*.xml
-  # 实体类包路径（自动扫描别名）
   type-aliases-package: com.hpos.entity
   configuration:
-    # 开启驼峰命名转换（数据库 user_name -> Java userName）
     map-underscore-to-camel-case: true
-    # SQL 日志实现（使用 SLF4J，不打印到控制台）
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
     db-config:
-      # 主键生成策略：自增（对应数据库 AUTO_INCREMENT）
       id-type: auto
-      # 逻辑删除字段名
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
+
+logging:
+  level:
+    com.hpos: info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

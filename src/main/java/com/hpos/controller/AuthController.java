@@ -2,7 +2,9 @@ package com.hpos.controller;
 
 import com.hpos.dto.ApiResponse;
 import com.hpos.dto.LoginRequest;
+import com.hpos.dto.LoginResponse;
 import com.hpos.entity.SysUser;
+import com.hpos.security.JwtUtil;
 import com.hpos.service.SysUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 登录认证 API
  * 
- * 当前使用简单的用户名+密码验证（MD5 加密比对），
- * 后续接入 JWT + Shiro 后，这里会改为 token 鉴权。
+ * 接入 JWT + Spring Security，登录后返回 token，后续请求需在 Header 携带：
+ * Authorization: Bearer <token>
  * 
  * <h3>接口：</h3>
  * <pre>
- * POST /api/auth/login      → 登录
+ * POST /api/auth/login      → 登录，返回 JWT token
  * GET  /api/auth/user/{xxx} → 获取用户信息
  * </pre>
  * 
@@ -34,8 +36,11 @@ public class AuthController {
     @Autowired
     private SysUserService userService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     /**
-     * 用户登录
+     * 用户登录（返回 JWT Token）
      * 
      * <h4>请求体：</h4>
      * <pre>
@@ -44,35 +49,39 @@ public class AuthController {
      * 
      * <h4>成功返回：</h4>
      * <pre>
-     * { "code": 200, "message": "登录成功", "data": { "id": 3, "username": "admin", "phone": "13800138000" } }
+     * {
+     *   "code": 200,
+     *   "message": "登录成功",
+     *   "data": {
+     *     "token": "eyJhbGciOiJIUzI1NiJ9...",
+     *     "userId": 3,
+     *     "username": "admin",
+     *     "phone": "13800138000"
+     *   }
+     * }
      * </pre>
-     * 注意：返回数据中 password 字段已被清空，不会暴露加密密码
      * 
-     * <h4>失败返回：</h4>
-     * <pre>
-     * { "code": 401, "message": "用户名或密码错误", "data": null }
-     * </pre>
+     * <h4>后续请求需在 Header 中携带 Token：</h4>
+     * Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
      * 
-     * @param request 登录参数（username + password），已做非空校验
+     * @param request 登录参数（username + password）
      */
     @PostMapping("/login")
-    public ApiResponse<SysUser> login(@Valid @RequestBody LoginRequest request) {
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         SysUser user = userService.login(request.getUsername(), request.getPassword());
         if (user == null) {
-            // 不区分"用户名不存在"和"密码错误"，防止暴力枚举用户名
             return ApiResponse.error(401, "用户名或密码错误");
         }
-        // 返回前清除密码，防止密码泄露
-        user.setPassword(null);
-        return ApiResponse.success("登录成功", user);
+
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+        LoginResponse loginResponse = new LoginResponse(token, user.getId(), user.getUsername(), user.getPhone());
+        return ApiResponse.success("登录成功", loginResponse);
     }
 
     /**
      * 获取用户信息
      * 
-     * GET /api/auth/user/admin
-     * 
-     * @param username 用户名（URL路径参数）
+     * GET /api/auth/user/{username}
      */
     @GetMapping("/user/{username}")
     public ApiResponse<SysUser> getUser(@PathVariable String username) {

@@ -10,6 +10,9 @@ import com.hpos.service.DepartmentService;
 import com.hpos.service.DoctorService;
 import com.hpos.service.RegistrationSourceService;
 import com.hpos.dto.DoctorScheduleVO;
+import com.hpos.redis.RedisCacheService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +40,21 @@ public class RegistrationSourceServiceImpl
         extends ServiceImpl<RegistrationSourceMapper, RegistrationSource>
         implements RegistrationSourceService {
 
+    private static final Logger log = LoggerFactory.getLogger(RegistrationSourceServiceImpl.class);
+    private static final String LOCK_KEY_PREFIX = "hpos:lock:source:";
+    private static final long LOCK_TTL = 10;
+
     @Autowired
     private DoctorService doctorService;
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private RedisCacheService redisCacheService;
+
+    @Autowired
+    private RegistrationSourceMapper registrationSourceMapper;
 
     /**
      * 查询医生的排班和号源（供前端选择时段使用）
@@ -106,26 +119,10 @@ public class RegistrationSourceServiceImpl
     /**
      * 扣减号源 —— 用户挂号时调用
      * 
-     * <h4>并发安全问题：</h4>
-     * 当前实现是"先查再改"，在高并发下存在超卖风险：
-     * <pre>
-     * 线程A: 查到 available_count = 1
-     * 线程B: 查到 available_count = 1（A还没更新）
-     * 线程A: 更新为 0 ✓
-     * 线程B: 更新为 0 ✓（超卖了！实际上只有一个号却卖了两次）
-     * </pre>
-     * 
-     * <h4>生产环境改进方案：</h4>
-     * 将扣减操作改为 SQL 原子更新：
-     * <pre>
-     * UPDATE registration_source 
-     * SET available_count = available_count - 1 
-     * WHERE id = ? AND available_count > 0
-     * </pre>
-     * 然后判断 MyBatis-Plus 的 update 返回值（受影响行数），
-     * 如果为 0 说明没抢到号。
-     * 
-     * 或者使用数据库行级锁：SELECT ... FOR UPDATE。
+     * 使用 Redis 分布式锁 + 原子 SQL 防止超卖：
+     * 1. 先尝试获取 Redis 锁（防止并发扣减）
+     * 2. 用原子 SQL 扣减（数据库层面保证）
+     * 3. 释放 Redis 锁
      * 
      * @param sourceId 号源ID
      * @return true=扣减成功，false=号源已满
@@ -133,38 +130,51 @@ public class RegistrationSourceServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deductSource(Integer sourceId) {
-        RegistrationSource source = this.getById(sourceId);
-        if (source == null) {
-            throw new RuntimeException("号源不存在");
+        return tryRedisLock(sourceId);
+    }
+
+    private boolean tryRedisLock(Integer sourceId) {
+        String lockKey = LOCK_KEY_PREFIX + sourceId;
+        boolean locked = redisCacheService.tryLock(lockKey, LOCK_TTL);
+        if (!locked) {
+            log.warn("获取Redis锁失败，有其他线程正在操作此号源: sourceId={}", sourceId);
+            return false;
         }
-        if (source.getAvailableCount() <= 0) {
-            return false; // 没号了
+        try {
+            return doDeduct(sourceId);
+        } finally {
+            redisCacheService.unlock(lockKey);
         }
-        // 扣减一个号
-        source.setAvailableCount(source.getAvailableCount() - 1);
-        this.updateById(source);
-        return true;
+    }
+
+    private boolean doDeduct(Integer sourceId) {
+        int rows = registrationSourceMapper.deductSourceAtomic(sourceId);
+        if (rows > 0) {
+            return true;
+        }
+        log.warn("号源已满: sourceId={}", sourceId);
+        return false;
     }
 
     /**
      * 恢复号源 —— 取消挂号时调用
      * 
-     * 把之前扣掉的 available_count 加回来。
-     * 安全检查：不能超过 total_count（防御性编程，正常情况下不会触发）
+     * 用原子 SQL 恢复，确保不超过总号数
      * 
      * @param sourceId 号源ID
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void restoreSource(Integer sourceId) {
-        RegistrationSource source = this.getById(sourceId);
-        if (source == null) {
-            throw new RuntimeException("号源不存在");
-        }
-        // 确保不超过总数（正常逻辑下不会达到这个上限）
-        if (source.getAvailableCount() < source.getTotalCount()) {
-            source.setAvailableCount(source.getAvailableCount() + 1);
-            this.updateById(source);
+        int rows = registrationSourceMapper.restoreSourceAtomic(sourceId);
+        if (rows == 0) {
+            RegistrationSource source = this.getById(sourceId);
+            if (source == null) {
+                throw new RuntimeException("号源不存在");
+            }
+            if (source.getAvailableCount() >= source.getTotalCount()) {
+                throw new RuntimeException("号源已满，无法恢复");
+            }
         }
     }
 }
