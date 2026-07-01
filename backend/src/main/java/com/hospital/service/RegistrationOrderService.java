@@ -61,7 +61,7 @@ public class RegistrationOrderService {
     }
 
     /**
-     * 根据患者ID和状态获取预约数据（用于JSP页面）
+     * 根据患者ID和状态获取预约数据
      * 如果patientId为null，则获取所有预约（管理员权限）
      */
     public List<RegistrationOrder> getAppointmentsByPatientId(Long patientId, String status) {
