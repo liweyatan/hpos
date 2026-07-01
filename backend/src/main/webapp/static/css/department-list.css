@@ -1,0 +1,153 @@
+/* 紫色主题样式 */
+.purple-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.btn-purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+}
+
+.btn-purple:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    color: white;
+}
+
+.btn-outline-purple {
+    color: #667eea;
+    border-color: #667eea;
+}
+
+.btn-outline-purple:hover {
+    background-color: #667eea;
+    color: white;
+}
+
+.bg-purple {
+    background-color: #667eea !important;
+}
+
+.text-purple {
+    color: #667eea !important;
+}
+
+.bg-light-purple {
+    background-color: #f5f0ff !important;
+}
+
+.border-purple {
+    border-color: #667eea !important;
+}
+
+/* 阴影效果 */
+.shadow-purple {
+    box-shadow: 0 .25rem 0.5rem rgba(102, 126, 234, 0.15) !important;
+}
+
+/* 科室卡片样式 */
+.department-card {
+    border: 2px solid #e9d8fd;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.department-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+}
+
+.department-stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* 模态框样式 */
+.modal-header.bg-purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 医生头像样式 */
+.doctor-avatar img {
+    border: 2px solid #667eea;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+/* 空状态样式 */
+.empty-state {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    border: 2px dashed #dee2e6;
+    text-align: center;
+}
+
+/* 消息提示框样式 */
+.alert-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+/* 面包屑导航样式 */
+.breadcrumb {
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .department-stats {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .stat-item {
+        flex: 0 0 calc(50% - 5px);
+    }
+
+    .alert-message {
+        left: 10px;
+        right: 10px;
+        min-width: auto;
+    }
+}
+
+/* 小字体类 */
+.extra-small {
+    font-size: 0.75rem;
+}
+
+/* 医生项样式 */
+.doctor-item {
+    transition: background-color 0.2s ease;
+}
+
+.doctor-item:hover {
+    background-color: #e9d8fd !important;
+}
+
+/* 页脚样式 */
+footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}

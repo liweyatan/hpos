@@ -5,9 +5,19 @@
 *.iml
 *.ipr
 
-# Node
-node_modules/
-dist/
+# Java / Maven
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+
+# Spring Boot logs
+backend/logs/
+
+# Node / Vue
+frontend/node_modules/
+frontend/dist/
 
 # OS
 .DS_Store
@@ -15,8 +25,3 @@ Thumbs.db
 
 # Logs
 *.log
-logs/
-
-# Env
-.env.local
-.env.*.local

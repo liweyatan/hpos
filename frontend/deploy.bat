@@ -7,11 +7,11 @@ if errorlevel 1 (
     exit /b 1
 )
 echo === Copying to backend static directory ===
-xcopy /E /Y /Q dist\* "..\hospitalend\hospitalend\src\main\resources\static\"
+xcopy /E /Y /Q dist\* "..\backend\src\main\resources\static\"
 echo === Done! Frontend deployed to backend ===
 echo.
 echo To start the full system:
-echo   cd ..\hospitalend\hospitalend
+echo   cd ..\backend
 echo   .\mvnw.cmd spring-boot:run
 echo.
 pause

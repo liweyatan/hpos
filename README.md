@@ -2,12 +2,14 @@
 
 # 🏥 智慧医院管理系统 (HPOS)
 
-**Vue 3 前端项目 · 医院挂号管理系统**
+**Spring Boot 3 + Vue 3 在线挂号平台 · 毕业设计项目**
 
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)](https://www.oracle.com/java/)
 [![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vue.js)](https://vuejs.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)](https://www.mysql.com/)
+[![MyBatis](https://img.shields.io/badge/MyBatis-3.0-blue)](https://mybatis.org/mybatis-3/)
 [![Vite](https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite)](https://vitejs.dev/)
-[![Axios](https://img.shields.io/badge/Axios-1.16-5A29E4?logo=axios)](https://axios-http.com/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap)](https://getbootstrap.com/)
 
 </div>
 
@@ -18,6 +20,7 @@
 - [项目介绍](#-项目介绍)
 - [技术栈](#-技术栈)
 - [项目结构](#-项目结构)
+- [数据库设计](#-数据库设计)
 - [快速开始](#-快速开始)
 - [部署到生产环境](#-部署到生产环境)
 - [测试数据](#-测试数据)
@@ -27,7 +30,7 @@
 
 ## 💡 项目介绍
 
-智慧医院管理系统是一个基于 **Vue 3 + Spring Boot 3** 的在线医疗挂号平台，模拟真实医院挂号流程：
+智慧医院管理系统是一个**前后端分离**的在线医疗挂号平台，模拟真实医院挂号流程：
 
 > **选择科室 → 选择医生 → 选择时间 → 填写个人信息 → 提交挂号 → 查看/取消挂号记录**
 
@@ -47,26 +50,26 @@
 
 ## 🛠 技术栈
 
+### 后端
+
 | 组件 | 技术 | 版本 |
 |------|------|------|
-| 🖼️ **前端框架** | Vue 3 (Options API) | 3.5.32 |
-| ⚡ **构建工具** | Vite | 8.0.8 |
-| 🌐 **HTTP 客户端** | Axios | 1.16.1 |
+| 🧩 **框架** | Spring Boot | 3.3.5 |
+| ☕ **语言** | Java | 17 |
+| 🗄️ **ORM** | MyBatis (注解式) | 3.0.3 |
+| 🛢️ **数据库** | MySQL | 8.0+ |
+| 🔐 **认证** | Session | - |
+| 📦 **构建** | Maven | 3.8+ |
+
+### 前端
+
+| 组件 | 技术 | 版本 |
+|------|------|------|
+| 🖼️ **框架** | Vue 3 (Options API) | 3.5.32 |
+| ⚡ **构建** | Vite | 8.0.8 |
+| 🌐 **HTTP** | Axios | 1.16.1 |
 | 🧭 **路由** | Vue Router | 4.6.4 |
-| 🎨 **UI 框架** | Bootstrap 5 (CDN) | 5.3 |
-| 🔤 **图标** | Font Awesome 6 (CDN) | 6.0 |
-
-### 后端（独立仓库）
-
-本项目需要配合 Spring Boot 后端使用，后端技术栈：
-
-| 组件 | 技术 |
-|------|------|
-| 🧩 框架 | Spring Boot 3.3.5 |
-| ☕ 语言 | Java 17 |
-| 🗄️ ORM | MyBatis (注解式) |
-| 🛢️ 数据库 | MySQL 8.0 |
-| 🔐 认证 | Session（非 JWT） |
+| 🎨 **UI** | Bootstrap 5 (CDN) | 5.3 |
 
 ---
 
@@ -77,39 +80,85 @@ hpos/
 ├── README.md
 ├── .gitignore
 │
-└── untitled/                        # 🖥️ Vue 前端项目
-    ├── index.html                   # HTML 入口
-    ├── package.json                 # 前端依赖
-    ├── vite.config.js               # Vite 配置（API 代理到 8080）
-    ├── deploy.bat                   # 一键构建 + 部署到后端
+├── backend/                             # ☕ Spring Boot 后端
+│   ├── pom.xml                          # Maven 配置
+│   ├── mvnw / mvnw.cmd                  # Maven Wrapper
+│   │
+│   └── src/main/
+│       ├── java/com/hospital/
+│       │   ├── HospitalendApplication.java   # 🚀 启动入口
+│       │   ├── config/                       # ⚙️ 配置（CORS、MyBatis）
+│       │   ├── entity/                       # 📦 实体类
+│       │   ├── repository/                   # 🔌 MyBatis Mapper
+│       │   ├── service/                      # 🧠 业务逻辑
+│       │   ├── controller/                   # 🌐 REST API
+│       │   │   ├── api/                      #    公开 API（认证、科室、医生、订单）
+│       │   │   └── AdminApiController.java   #    管理员 API
+│       │   └── dto/                          # 📨 数据传输对象
+│       │
+│       ├── resources/
+│       │   ├── application.properties        # 📝 配置文件
+│       │   └── static/                       # 🖥️ Vue 构建产物（部署后）
+│       │
+│       └── webapp/                            # JSP 页面（兼容旧版）
+│
+└── frontend/                            # 🖥️ Vue 3 前端
+    ├── index.html
+    ├── package.json
+    ├── vite.config.js                   # Vite 配置（API 代理到 8080）
+    ├── deploy.bat                       # 一键构建 + 部署
     │
     └── src/
-        ├── main.js                  # 入口文件
-        ├── App.vue                  # 根组件（含 Header）
-        │
+        ├── main.js
+        ├── App.vue
         ├── api/
-        │   ├── index.js             # API 封装（axios 拦截器）
-        │   └── auth.js              # 响应式认证状态管理
-        │
-        ├── router/
-        │   └── index.js             # Vue Router 路由配置
-        │
-        ├── views/
-        │   ├── Home.vue             # 首页
-        │   ├── Login.vue            # 登录页
-        │   ├── RegisterUser.vue     # 用户注册
-        │   ├── Register.vue         # 挂号预约（4步流程）
-        │   ├── Orders.vue           # 我的预约
-        │   ├── DepartmentList.vue   # 科室列表
-        │   └── Admin.vue            # 管理员后台
-        │
+        │   ├── index.js                 # API 封装（axios）
+        │   └── auth.js                  # 认证状态管理
+        ├── router/index.js              # 路由配置
+        ├── views/                       # 页面组件
+        │   ├── Home.vue                 # 首页
+        │   ├── Login.vue                # 登录
+        │   ├── RegisterUser.vue         # 注册
+        │   ├── Register.vue             # 挂号预约
+        │   ├── Orders.vue               # 我的预约
+        │   ├── DepartmentList.vue       # 科室列表
+        │   └── Admin.vue                # 管理员后台
         ├── components/
-        │   ├── Header.vue           # 导航栏
-        │   └── Footer.vue           # 页脚
-        │
-        └── assets/
-            └── main.css             # 全局样式（合并 5 个 CSS）
+        │   ├── Header.vue               # 导航栏
+        │   └── Footer.vue               # 页脚
+        └── assets/main.css              # 全局样式
 ```
+
+---
+
+## 🗂 数据库设计
+
+系统包含 **5 张核心表**：
+
+```
+department (1) ──→ (N) doctor
+                          │
+patient (1) ──→ (N) registration_order ←──┘
+                          │
+user (1) ──→ (1) patient
+```
+
+| 表名 | 说明 | 关键字段 |
+|------|------|----------|
+| `department` | 科室表 | `id`, `name`, `description`, `director`, `phone`, `location` |
+| `doctor` | 医生表 | `id`, `name`, `department_id`, `title`, `specialty`, `max_patients` |
+| `patient` | 患者表 | `id`, `name`, `id_card`, `phone`, `gender` |
+| `registration_order` | 挂号订单 | `id`, `patient_id`, `doctor_id`, `register_time`, `status`, `symptoms` |
+| `user` | 用户表 | `id`, `username`, `password`, `role`, `phone`, `real_name` |
+
+### 订单状态
+
+| 状态 | 说明 |
+|:----:|------|
+| `PENDING` | 待处理 |
+| `CONFIRMED` | 已确认 |
+| `COMPLETED` | 已完成 |
+| `CANCELLED` | 已取消 |
 
 ---
 
@@ -119,79 +168,76 @@ hpos/
 
 | 环境 | 版本 |
 |:----|:----:|
-| Node.js | 20+ |
 | JDK | 17+ |
 | MySQL | 8.0+ |
+| Node.js | 20+ |
 | Maven | 3.8+ |
 
 ### 1️⃣ 初始化数据库
 
 ```bash
-# 导入数据库（需要先在 hospitalend 仓库找到 SQL 脚本）
-mysql -u root -p hospital_db < hospital_db.sql
+mysql -u root -p -e "CREATE DATABASE hospital_db;"
+mysql -u root -p hospital_db < backend/src/main/resources/hospital_db.sql
 ```
 
-### 2️⃣ 启动后端
+### 2️⃣ 修改数据库配置
+
+编辑 `backend/src/main/resources/application.properties`：
+
+```properties
+spring.datasource.username=root        # 你的 MySQL 用户名
+spring.datasource.password=123456      # 你的 MySQL 密码
+```
+
+### 3️⃣ 启动后端
 
 ```bash
-# 进入后端目录（hospitalend 仓库）
-cd hospitalend
-# 修改 application.properties 中的数据库用户名密码
+cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
-后端启动后监听 `http://localhost:8080`
+后端启动在 `http://localhost:8080`
 
-### 3️⃣ 启动前端（开发模式）
+### 4️⃣ 启动前端
 
 ```bash
-cd untitled
-npm install            # 首次需要安装依赖
-npm run dev            # 启动 Vite 开发服务器
+cd frontend
+npm install
+npm run dev
 ```
 
 浏览器访问 `http://localhost:5173`
-
-### 4️⃣ 生产部署（单进程）
-
-```bash
-# 一键构建前端并复制到后端 static 目录
-cd untitled
-deploy.bat
-
-# 然后重启后端，访问 http://localhost:8080 即可
-```
 
 ---
 
 ## 🚀 部署到生产环境
 
-### 新电脑部署
+### 新电脑一键部署
 
 ```bash
 # 1. 安装 JDK 17 + MySQL 8 + Node.js 20
 
 # 2. 导入数据库
 mysql -u root -p -e "CREATE DATABASE hospital_db;"
-mysql -u root -p hospital_db < hospital_db.sql
+mysql -u root -p hospital_db < backend/src/main/resources/hospital_db.sql
 
-# 3. 修改后端数据库配置
-# 编辑 hospitalend/src/main/resources/application.properties
+# 3. 修改数据库密码
+# 编辑 backend/src/main/resources/application.properties
 
-# 4. 构建前端
-cd untitled
+# 4. 构建前端并部署到后端
+cd frontend
 npm install
 npm run build
+xcopy /E /Y dist\* "..\backend\src\main\resources\static\"
 
-# 5. 复制到后端
-xcopy /E /Y dist\* "..\hospitalend\src\main\resources\static\"
-
-# 6. 启动（只需一个 Java 进程）
-cd ..\hospitalend
+# 5. 启动（单个 Java 进程）
+cd ..\backend
 .\mvnw.cmd spring-boot:run
 
-# 7. 打开 http://localhost:8080
+# 6. 打开 http://localhost:8080
 ```
+
+或使用一键脚本：`frontend/deploy.bat`
 
 ---
 
@@ -232,13 +278,50 @@ cd ..\hospitalend
 
 | 页面 | 路由 | 说明 |
 |------|------|------|
-| 首页 | `/` | 系统首页，展示医院信息 |
+| 首页 | `/` | 系统首页 |
 | 登录 | `/login` | 用户登录 |
 | 注册 | `/register-user` | 用户注册 |
 | 科室列表 | `/departments` | 所有科室信息 |
 | 挂号预约 | `/register` | 4 步挂号流程 |
 | 我的预约 | `/orders` | 查看/取消预约记录 |
 | 管理后台 | `/admin` | 管理科室/医生/预约/用户（需管理员权限） |
+
+---
+
+## 🌐 API 接口
+
+### 认证
+
+| 方法 | 路径 | 说明 |
+|:----:|------|:----:|
+| POST | `/api/auth/login` | 登录 |
+| POST | `/api/auth/register` | 注册 |
+
+### 科室 & 医生
+
+| 方法 | 路径 | 说明 |
+|:----:|------|:----:|
+| GET | `/api/departments` | 科室列表 |
+| GET | `/api/doctors` | 医生列表 |
+| GET | `/api/doctors/department/{id}` | 按科室查医生 |
+
+### 挂号订单
+
+| 方法 | 路径 | 说明 |
+|:----:|------|:----:|
+| POST | `/api/registration-orders/with-patient` | 创建挂号 |
+| GET | `/api/registration-orders/patient/{id}` | 查询患者预约 |
+| PUT | `/api/registration-orders/{id}/status` | 取消预约 |
+
+### 管理员
+
+| 方法 | 路径 | 说明 |
+|:----:|------|:----:|
+| GET/POST/PUT/DELETE | `/api/admin/departments` | 科室 CRUD |
+| GET/POST/PUT/DELETE | `/api/admin/doctors` | 医生 CRUD |
+| GET | `/api/admin/appointments` | 预约列表 |
+| PUT | `/api/admin/appointments/{id}/status` | 更新预约状态 |
+| GET/POST/PUT/DELETE | `/api/admin/users` | 用户 CRUD |
 
 ---
 
