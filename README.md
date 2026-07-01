@@ -69,7 +69,7 @@
 | ⚡ **构建** | Vite | 8.0.8 |
 | 🌐 **HTTP** | Axios | 1.16.1 |
 | 🧭 **路由** | Vue Router | 4.6.4 |
-| 🎨 **UI** | Bootstrap 5 (CDN) | 5.3 |
+| 🎨 **UI** | Bootstrap 5 (本地) | 5.3 |
 
 ---
 
@@ -87,20 +87,19 @@ hpos/
 │   └── src/main/
 │       ├── java/com/hospital/
 │       │   ├── HospitalendApplication.java   # 🚀 启动入口
-│       │   ├── config/                       # ⚙️ 配置（CORS、MyBatis）
+│       │   ├── config/                       # ⚙️ 配置（CORS、静态资源）
 │       │   ├── entity/                       # 📦 实体类
 │       │   ├── repository/                   # 🔌 MyBatis Mapper
 │       │   ├── service/                      # 🧠 业务逻辑
 │       │   ├── controller/                   # 🌐 REST API
 │       │   │   ├── api/                      #    公开 API（认证、科室、医生、订单）
+│       │   │   ├── HomeController.java       #    首页路由 → index.html
 │       │   │   └── AdminApiController.java   #    管理员 API
 │       │   └── dto/                          # 📨 数据传输对象
 │       │
-│       ├── resources/
-│       │   ├── application.properties        # 📝 配置文件
-│       │   └── static/                       # 🖥️ Vue 构建产物（部署后）
-│       │
-│       └── webapp/                            # JSP 页面（兼容旧版）
+│       └── resources/
+│           ├── application.properties        # 📝 配置文件
+│           └── static/                       # 🖥️ Vue 构建产物（部署后）
 │
 └── frontend/                            # 🖥️ Vue 3 前端
     ├── index.html
@@ -322,6 +321,32 @@ cd ..\backend
 | GET | `/api/admin/appointments` | 预约列表 |
 | PUT | `/api/admin/appointments/{id}/status` | 更新预约状态 |
 | GET/POST/PUT/DELETE | `/api/admin/users` | 用户 CRUD |
+
+---
+
+## 🐛 常见问题
+
+### 页面加载慢 / 白屏
+
+- 浏览器按 `Ctrl + Shift + F5` 强制刷新清缓存
+- 或用无痕模式打开 `http://localhost:8080`
+- 确认 F12 → Console 没有报错
+
+### 前端样式加载不出来
+
+- Bootstrap / Font Awesome / Bootstrap Icons 已本地化到 `frontend/public/`，不需要联网
+- 确认 `backend/src/main/resources/static/` 下有 `bootstrap.min.css`、`fontawesome.min.css` 等文件
+
+### CORS 跨域错误
+
+- `CorsConfig.java` 已全局配置 CORS，支持 `withCredentials`
+- 如有 Nginx 反向代理，需在 Nginx 配置 CORS 头
+
+### 数据库连接失败
+
+- 确认 MySQL 服务已启动
+- 确认 `application.properties` 中用户名密码正确
+- 确认 `hospital_db` 数据库已创建并导入 SQL
 
 ---
 
