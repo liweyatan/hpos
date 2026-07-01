@@ -30,7 +30,7 @@
       </div>
 
       <div class="border-top pt-3 text-center text-muted">
-        <p>&copy; 2023 智慧医院挂号系统. 毕业设计项目.</p>
+        <p>&copy; 2023 智慧医院管理系统. 毕业设计项目.</p>
       </div>
     </div>
   </footer>

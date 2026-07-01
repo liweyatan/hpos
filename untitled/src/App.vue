@@ -1,29 +1,33 @@
 <template>
   <div id="app">
     <Header v-if="showNav" />
-    <main>
-      <router-view />
+    <main class="main-content">
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
-    <Footer v-if="showNav" />
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
-  components: { Header, Footer },
+  components: { Header },
   computed: {
     showNav() {
-      return this.$route.path !== '/login'
+      return true
     },
   },
 }
 </script>
 
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f5f7fa; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import './assets/main.css';
+
+.main-content { min-height: calc(100vh - 60px); }
 </style>

@@ -1,69 +1,74 @@
 <template>
-  <header class="hospital-header">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container">
-        <router-link class="navbar-brand" to="/">
-          <i class="bi bi-hospital me-2"></i>
-          智慧医院挂号系统
-        </router-link>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/" @click.prevent="$router.push('/')">
+        <i class="fas fa-hospital me-2"></i>
+        <strong>智慧医院管理系统</strong>
+      </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/" @click.prevent="$router.push('/')">
+          <i class="fas fa-home me-1"></i>首页
+        </a>
+        <a class="nav-link" href="/orders" @click.prevent="$router.push('/orders')">
+          <i class="fas fa-list-alt me-1"></i>我的预约
+        </a>
 
-        <div class="collapse navbar-collapse" id="navMenu">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <router-link class="nav-link" to="/register" :class="{ active: $route.path === '/register' }">
-                <i class="bi bi-plus-circle me-1"></i>在线挂号
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/orders" :class="{ active: $route.path === '/orders' }">
-                <i class="bi bi-list-ul me-1"></i>我的挂号
-              </router-link>
-            </li>
-          </ul>
+        <div v-if="!auth.loggedIn">
+          <a class="nav-link" href="/login" @click.prevent="$router.push('/login')">
+            <i class="fas fa-sign-in-alt me-1"></i>登录
+          </a>
+        </div>
 
-          <ul class="navbar-nav" v-if="isLoggedIn">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                <i class="bi bi-person-circle me-1"></i>{{ username }}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#" @click.prevent="logout">退出登录</a></li>
-              </ul>
+        <div v-if="auth.loggedIn" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user me-1"></i>
+            <span>{{ displayName }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <span class="dropdown-item-text small">
+                <i class="fas fa-user me-1"></i>{{ displayName }} ({{ roleText }}) <span v-if="isAdmin" class="admin-badge">管理员</span>
+              </span>
             </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item admin-item" href="#" @click.prevent="goAdmin"><i class="fas fa-cog me-1"></i>管理员后台</a></li>
+            <li><a class="dropdown-item logout-item" href="#" @click.prevent="handleLogout"><i class="fas fa-sign-out-alt me-1"></i>退出登录</a></li>
           </ul>
         </div>
       </div>
-    </nav>
-  </header>
+    </div>
+  </nav>
 </template>
 
 <script>
+import { getAuthState, setLogout } from '@/api/auth.js'
+
 export default {
-  name: 'Header',
+  name: 'AppHeader',
   computed: {
-    isLoggedIn() {
-      return !!localStorage.getItem('token')
+    auth() { return getAuthState() },
+    displayName() { return this.auth.realName || this.auth.username || '用户' },
+    roleText() {
+      return { ADMIN: '管理员', DOCTOR: '医生', PATIENT: '患者', USER: '用户' }[this.auth.role] || '用户'
     },
-    username() {
-      return localStorage.getItem('username') || '用户'
-    },
+    isAdmin() { return this.auth.role === 'ADMIN' },
   },
   methods: {
-    logout() {
-      localStorage.removeItem('token')
-      localStorage.removeItem('userId')
-      localStorage.removeItem('username')
-      localStorage.removeItem('phone')
-      this.$router.push('/login')
+    goAdmin() {
+      if (!this.isAdmin) {
+        const roleText = { ADMIN: '管理员', DOCTOR: '医生', PATIENT: '患者', USER: '用户' }[this.auth.role] || '用户'
+        alert(`权限不足！您只是${roleText}，想什么呢？`)
+        return
+      }
+      this.$router.push('/admin')
+    },
+    handleLogout() {
+      if (confirm('确定要退出登录吗？')) {
+        setLogout()
+        this.$router.push('/')
+      }
     },
   },
 }
 </script>
-
-<style scoped>
-.hospital-header { box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-</style>

@@ -1,69 +1,76 @@
 <template>
-  <div class="login-page">
-    <div class="container">
-      <div class="row justify-content-center min-vh-100 align-items-center">
-        <div class="col-md-5 col-lg-4">
-          <div class="card shadow-lg border-0 rounded-4">
+  <div>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+              <h4 class="mb-0">
+                <i class="fas fa-user-circle me-2"></i>用户登录
+              </h4>
+            </div>
             <div class="card-body p-4">
-              <div class="text-center mb-4">
-                <i class="bi bi-hospital fs-1 text-primary"></i>
-                <h4 class="mt-2">智慧医院挂号系统</h4>
-                <p class="text-muted small">请登录后使用挂号服务</p>
-              </div>
-
               <form @submit.prevent="handleLogin">
                 <div class="mb-3">
-                  <label class="form-label">用户名</label>
+                  <label class="form-label">用户名/手机号</label>
                   <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                    <input type="text" class="form-control" v-model="username" placeholder="请输入用户名" required>
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" v-model="username" placeholder="请输入用户名或手机号" required>
                   </div>
                 </div>
-
                 <div class="mb-3">
                   <label class="form-label">密码</label>
                   <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                    <input :type="showPwd ? 'text' : 'password'" class="form-control" v-model="password"
-                      placeholder="请输入密码" required>
-                    <button class="btn btn-outline-secondary" type="button" @click="showPwd = !showPwd">
-                      <i :class="showPwd ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-                    </button>
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" v-model="password" placeholder="请输入密码" required>
                   </div>
                 </div>
-
+                <div class="mb-3 form-check">
+                  <input type="checkbox" class="form-check-input" id="rememberMe" v-model="rememberMe">
+                  <label class="form-check-label" for="rememberMe">记住我</label>
+                  <a href="#" class="float-end text-decoration-none">忘记密码？</a>
+                </div>
                 <div v-if="errorMsg" class="alert alert-danger py-2 small">{{ errorMsg }}</div>
-
-                <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
-                  <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-                  {{ loading ? '登录中...' : '登 录' }}
-                </button>
-
-                <div class="text-center mt-3">
-                  <small class="text-muted">测试账号: admin / 123456</small>
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary btn-lg" :disabled="loading">
+                    <i v-if="loading" class="fas fa-spinner fa-spin me-2"></i>
+                    <i v-else class="fas fa-sign-in-alt me-2"></i>{{ loading ? '登录中...' : '登录' }}
+                  </button>
                 </div>
               </form>
+              <hr class="my-4">
+              <div class="text-center">
+                <p class="text-muted mb-0">还没有账号？</p>
+                <a href="/register" class="btn btn-outline-primary btn-sm mt-2" @click.prevent="$router.push('/register')">
+                  <i class="fas fa-user-plus me-1"></i>立即注册
+                </a>
+              </div>
             </div>
+          </div>
+          <div class="alert alert-info mt-3">
+            <h6 class="alert-heading">测试账户：</h6>
+            <p class="mb-1">管理员: <strong>kobe</strong> / <strong>123456</strong></p>
+            <p class="mb-0">用户: <strong>kobe1</strong> / <strong>123456</strong></p>
           </div>
         </div>
       </div>
     </div>
+    <footer class="bg-dark text-white py-4 mt-5">
+      <div class="container text-center">
+        <p class="mb-0"><i class="fas fa-copyright me-1"></i>2025 <strong>智慧医院管理系统</strong> 版权所有</p>
+      </div>
+    </footer>
   </div>
 </template>
 
 <script>
 import { login, findPatientByPhone } from '@/api/index.js'
+import { setLogin } from '@/api/auth.js'
 
 export default {
   name: 'LoginPage',
   data() {
-    return {
-      username: '',
-      password: '',
-      showPwd: false,
-      loading: false,
-      errorMsg: '',
-    }
+    return { username: '', password: '', rememberMe: false, loading: false, errorMsg: '' }
   },
   methods: {
     async handleLogin() {
@@ -71,27 +78,27 @@ export default {
       this.loading = true
       try {
         const res = await login(this.username, this.password)
-        localStorage.setItem('token', res.token)
-        localStorage.setItem('userId', String(res.userId))
-        localStorage.setItem('username', res.username)
-        localStorage.setItem('phone', res.phone || '')
-
-        // 根据手机号查找患者ID
-        if (res.phone) {
+        const user = res.user
+        setLogin(user)
+        if (user.phone) {
           try {
-            const patient = await findPatientByPhone(res.phone)
-            if (patient) {
+            const patient = await findPatientByPhone(user.phone)
+            if (patient && patient.id) {
               localStorage.setItem('patientId', String(patient.id))
-              localStorage.setItem('patientName', patient.realName || '')
+              localStorage.setItem('patientName', patient.name || '')
             }
-          } catch (e) {
-            // 患者不存在也没关系
-          }
+          } catch (e) { /* ignore */ }
         }
-
-        this.$router.push('/register')
+        const displayName = user.realName || user.username
+        const roleText = user.role === 'ADMIN' ? '管理员' : '用户'
+        alert(`登录成功！欢迎 ${displayName}（${roleText}）`)
+        if (user.role === 'ADMIN') {
+          this.$router.push('/admin')
+        } else {
+          this.$router.push('/')
+        }
       } catch (e) {
-        this.errorMsg = e.message || '登录失败，请检查用户名密码'
+        this.errorMsg = e.message || '用户名或密码错误！'
       } finally {
         this.loading = false
       }
@@ -99,13 +106,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.login-page {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-}
-.card {
-  backdrop-filter: blur(10px);
-}
-</style>

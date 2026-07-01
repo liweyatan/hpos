@@ -1,54 +1,253 @@
-/* src/styles/main.css */
-/* 自定义样式补充 */
+/* 协和医院风格 - 全局样式 (合并自 styles.css + admin.css + appointment.css + appointments.css + department-list.css) */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 
-/* 响应式调整 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6; color: #333; background-color: #f8f9fa;
+    display: flex; flex-direction: column; min-height: 100vh;
+}
+
+#app { flex: 1; display: flex; flex-direction: column; }
+
+/* ===== 导航栏 (styles.css) ===== */
+.navbar { background: linear-gradient(135deg, #0056b3 0%, #007bff 100%) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.8rem 0; }
+.navbar-brand { font-size: 1.4rem; font-weight: 600; color: white !important; }
+.navbar-nav .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; padding: 0.5rem 1rem; transition: all 0.3s ease; }
+.navbar-nav .nav-link:hover { color: white !important; background-color: rgba(255,255,255,0.1); border-radius: 5px; }
+
+/* ===== 下拉菜单 (styles.css) ===== */
+.dropdown-menu { border-radius: 12px !important; box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important; padding: 0 !important; overflow: hidden !important; min-width: 220px !important; border: 1px solid rgba(0,123,255,0.1) !important; background: white !important; margin-top: 8px !important; border-top: 3px solid #007bff !important; }
+.dropdown-item { padding: 14px 20px !important; transition: all 0.3s ease !important; font-weight: 500 !important; border-bottom: 1px solid rgba(0,0,0,0.05) !important; color: #495057 !important; font-size: 0.95rem !important; text-decoration: none !important; display: block !important; width: 100% !important; }
+.dropdown-item:last-child { border-bottom: none !important; }
+.dropdown-item:hover { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important; color: white !important; transform: translateX(5px) !important; box-shadow: 0 3px 10px rgba(0,123,255,0.3) !important; }
+.dropdown-item-text { padding: 14px 20px !important; color: #6c757d !important; font-weight: 500 !important; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important; border-bottom: 1px solid #e9ecef !important; font-size: 0.9rem !important; }
+.dropdown-divider { margin: 0 !important; background-color: rgba(0,0,0,0.1) !important; }
+
+.nav-item.dropdown.show .dropdown-menu { display: block !important; opacity: 1 !important; visibility: visible !important; }
+
+/* 管理员菜单项 */
+.dropdown-item.admin-item { background: linear-gradient(135deg, rgba(255,193,7,0.1) 0%, rgba(253,126,20,0.05) 100%) !important; border-left: 3px solid #ffc107 !important; }
+.dropdown-item.admin-item:hover { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important; border-left: 3px solid transparent !important; }
+.dropdown-item.logout-item { background: linear-gradient(135deg, rgba(220,53,69,0.1) 0%, rgba(253,126,20,0.05) 100%) !important; border-left: 3px solid #dc3545 !important; }
+.dropdown-item.logout-item:hover { background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%) !important; border-left: 3px solid transparent !important; }
+.admin-badge { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; padding: 4px 8px; border-radius: 15px; font-size: 0.75rem; font-weight: 600; margin-left: 5px; }
+
+/* ===== Banner (styles.css) ===== */
+.hospital-banner { background: linear-gradient(135deg, #0056b3 0%, #007bff 100%); color: white; padding: 80px 0; position: relative; overflow: hidden; }
+.hospital-banner::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.1)"/></svg>') no-repeat; opacity: 0.3; }
+.min-vh-50 { min-height: 50vh; }
+
+/* ===== 卡片 (styles.css) ===== */
+.card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; border: 1px solid rgba(0,123,255,0.1); }
+.card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+.card-header { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-bottom: 2px solid rgba(0,123,255,0.1); padding: 1.25rem 1.5rem; }
+.card-title { color: #495057; font-weight: 600; margin: 0; }
+.feature-icon { width: 80px; height: 80px; background: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(0,86,179,0.05) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+
+/* ===== 按钮 (styles.css) ===== */
+.btn { border-radius: 8px; padding: 10px 25px; font-weight: 500; transition: all 0.3s ease; border: none; }
+.btn-primary { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); box-shadow: 0 2px 5px rgba(0,123,255,0.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,123,255,0.4); }
+.btn-light { background: rgba(255,255,255,0.9); color: #007bff; border: none; }
+.btn-light:hover { background: white; color: #0056b3; transform: scale(1.05); }
+.btn-sm { padding: 0.25rem 0.5rem; font-size: 0.8rem; }
+
+/* ===== 表单 (styles.css) ===== */
+.form-control { border-radius: 8px; border: 2px solid #e9ecef; padding: 12px 15px; transition: all 0.3s ease; }
+.form-control:focus { border-color: #007bff; box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25); }
+.form-label { font-weight: 600; color: #495057; margin-bottom: 0.5rem; }
+.form-check-input:checked { background-color: #007bff; border-color: #007bff; }
+
+/* ===== 表格 (styles.css + admin.css) ===== */
+.table { border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 0; }
+.table th { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; font-weight: 600; padding: 15px; }
+.table td { padding: 12px 15px; border-color: #e9ecef; vertical-align: middle; }
+.table tbody tr:hover { background-color: rgba(0,123,255,0.05); transform: scale(1.01); transition: all 0.2s ease; }
+.table-responsive::-webkit-scrollbar { height: 8px; }
+.table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+
+/* ===== 状态标签 (styles.css + admin.css) ===== */
+.badge { font-size: 0.75rem; padding: 0.35rem 0.65rem; border-radius: 15px; font-weight: 500; }
+.badge.bg-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important; }
+.badge.bg-danger { background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%) !important; }
+.badge.bg-warning { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important; color: #212529; }
+.badge.bg-secondary { background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important; }
+
+/* ===== 消息提示 (styles.css + admin.css) ===== */
+.alert { border-radius: 10px; border: none; font-weight: 500; padding: 1rem 1.5rem; }
+.alert-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+.alert-danger { background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%); color: white; }
+.alert-info { background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%); color: white; }
+
+/* ===== 模态框 (admin.css) ===== */
+.modal-content { border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.modal-header { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-bottom: none; border-radius: 15px 15px 0 0; padding: 1.5rem; }
+.modal-title { font-weight: 600; margin: 0; }
+.modal-body { padding: 2rem; }
+.modal-footer { border-top: 1px solid #e9ecef; padding: 1.5rem; }
+
+/* ===== 分页 (admin.css) ===== */
+.pagination { margin: 0; }
+.page-link { border: none; color: #007bff; padding: 0.5rem 0.75rem; border-radius: 5px; margin: 0 0.25rem; }
+.page-link:hover { background: rgba(0,123,255,0.1); color: #0056b3; }
+.page-item.active .page-link { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); border: none; }
+
+/* ===== 统计卡片 (admin.css) ===== */
+.stats-card { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; padding: 1.5rem; text-align: center; border: 1px solid rgba(0,123,255,0.1); }
+.stats-card .stats-number { font-size: 2rem; font-weight: 700; color: #007bff; margin-bottom: 0.5rem; }
+.stats-card .stats-label { color: #6c757d; font-size: 0.9rem; font-weight: 500; }
+
+/* ===== 搜索框 (admin.css) ===== */
+.search-box { position: relative; max-width: 300px; }
+.search-box .form-control { padding-left: 2.5rem; }
+.search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #6c757d; }
+
+/* ===== 空状态 (admin.css + appointments.css) ===== */
+.empty-state { text-align: center; padding: 60px 20px; color: #6c757d; background-color: #f8f9fa; border-radius: 12px; border: 2px dashed #dee2e6; }
+.empty-state i, .empty-state-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+.empty-state h5 { margin-bottom: 0.5rem; color: #495057; }
+
+/* ===== 加载动画 ===== */
+.loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+.spinner-border { color: #007bff; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== 页脚 (styles.css) ===== */
+footer { background: #343a40 !important; color: white; margin-top: auto; }
+
+/* ===== 顶部工具类 (styles.css) ===== */
+.text-primary { color: #007bff !important; }
+.bg-primary { background: linear-gradient(135deg, #0056b3 0%, #007bff 100%) !important; }
+.bg-light { background-color: #f8f9fa !important; }
+
+/* =================================================================
+   预约页面样式 (appointment.css)
+   ================================================================= */
+
+/* 步骤指示器 */
+.steps { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.step-item { display: flex; flex-direction: column; align-items: center; position: relative; flex: 1; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; top: 20px; left: 50%; right: -50%; height: 2px; background-color: #e0f0ff; z-index: 0; }
+.step-number { width: 40px; height: 40px; border-radius: 50%; background-color: #e0f0ff; color: #1e90ff; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 8px; transition: all 0.3s ease; z-index: 1; position: relative; }
+.step-item.active .step-number { background-color: #1e90ff; color: white; transform: scale(1.1); }
+.step-item.completed .step-number { background-color: #2ed573; color: white; }
+.step-label { font-size: 0.9rem; color: #666; text-align: center; }
+
+/* 科室卡片 (预约) */
+.department-card { border: 2px solid #e0f0ff; border-radius: 10px; padding: 15px; display: flex; align-items: center; transition: all 0.3s ease; cursor: pointer; background: white; }
+.department-icon { width: 50px; height: 50px; border-radius: 50%; background-color: #e0f0ff; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #1e90ff; font-size: 1.2rem; }
+.department-info h6 { margin-bottom: 5px; color: #333; }
+.department-card:hover { border-color: #1e90ff; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(30,144,255,0.1); }
+.department-card.selected { border-color: #1e90ff; background-color: #f0f8ff; }
+
+/* 医生卡片 (预约) */
+.doctor-card { border: 2px solid #e0f0ff; border-radius: 10px; padding: 15px; display: flex; align-items: center; transition: all 0.3s ease; cursor: pointer; background: white; }
+.doctor-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #e0f0ff; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #1e90ff; font-size: 1.2rem; }
+.doctor-info h6 { margin-bottom: 5px; color: #333; }
+.doctor-card:hover { border-color: #1e90ff; }
+.doctor-card.selected { border-color: #1e90ff; background-color: #f0f8ff; }
+
+/* 日期卡片 */
+.date-card { border: 2px solid #e0f0ff; border-radius: 10px; padding: 15px; text-align: center; transition: all 0.3s ease; cursor: pointer; background: white; }
+.date-card:hover:not(.unavailable) { border-color: #1e90ff; }
+.date-card.selected { border-color: #1e90ff; background-color: #f0f8ff; }
+.date-card.unavailable { opacity: 0.5; cursor: not-allowed; }
+.date-day { font-size: 1rem; font-weight: bold; color: #333; }
+.date-number { font-size: 0.9rem; color: #666; margin: 5px 0; }
+.date-status { font-size: 0.8rem; color: #dc3545; }
+
+/* 时间段 */
+.time-slot { border: 2px solid #e0f0ff; border-radius: 8px; padding: 10px; text-align: center; transition: all 0.3s ease; cursor: pointer; background: white; }
+.time-slot:hover:not(.unavailable) { border-color: #1e90ff; }
+.time-slot.selected { border-color: #1e90ff; background-color: #f0f8ff; }
+.time-slot.unavailable { opacity: 0.5; cursor: not-allowed; }
+
+/* 日期选择器（横向滚动） */
+.date-selector { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
+.date-btn { min-width: 100px; padding: 15px 10px; border: 2px solid #e0f0ff; border-radius: 10px; background: white; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+.date-btn:hover { border-color: #1e90ff; }
+.date-btn.selected { border-color: #1e90ff; background-color: #f0f8ff; }
+.date-btn .day { font-size: 1.1rem; font-weight: bold; color: #333; }
+.date-btn .date { font-size: 0.9rem; color: #666; margin: 5px 0; }
+.date-btn .status { font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+.date-btn .status.available { background-color: #d4edda; color: #155724; }
+.date-btn .status:not(.available) { background-color: #f8d7da; color: #721c24; }
+
+/* 时段网格 */
+.time-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.time-slot-btn { padding: 15px; border: 2px solid #e0f0ff; border-radius: 10px; background: white; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+.time-slot-btn:hover:not(.disabled) { border-color: #1e90ff; }
+.time-slot-btn.selected { border-color: #1e90ff; background-color: #f0f8ff; }
+.time-slot-btn.available { cursor: pointer; }
+.time-slot-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+.time-slot-btn .time { font-size: 1.1rem; font-weight: bold; color: #333; }
+.time-slot-btn .status { font-size: 0.8rem; color: #666; margin: 5px 0; }
+.time-slot-btn .fee { font-size: 0.9rem; color: #1e90ff; font-weight: bold; }
+
+/* 步骤连线 */
+.step-line { flex: 1; height: 2px; background-color: #e0f0ff; margin: 0 10px; position: relative; top: -20px; }
+
+/* 详情项 */
+.info-section { margin-bottom: 20px; }
+.info-section h6 { color: #1e90ff; margin-bottom: 10px; }
+.notice-box { border-left: 4px solid #1e90ff; }
+.notice-box h6 { color: #1e90ff; }
+.notice-box ul { padding-left: 1.5rem; margin-bottom: 0; }
+.notice-box li { margin-bottom: 5px; color: #666; }
+
+/* =================================================================
+   我的预约页面样式 (appointments.css)
+   ================================================================= */
+.appointments-container { min-height: 600px; }
+.appointment-status-filter { background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.appointment-item { border: 1px solid #e0f0ff; border-radius: 8px; margin-bottom: 15px; transition: all 0.3s ease; border-left: 4px solid #1e90ff; }
+.appointment-item:hover { border-color: #1e90ff; box-shadow: 0 4px 12px rgba(30,144,255,0.1); }
+.appointment-header { background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%); border-bottom: 1px solid #e0f0ff; padding: 15px; border-radius: 8px 8px 0 0; }
+.appointment-content { padding: 20px; }
+.appointment-actions { border-top: 1px solid #f0f0f0; padding: 15px 20px; background-color: #fafafa; border-radius: 0 0 8px 8px; }
+.status-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 12px; }
+.status-reserved { background-color: #d4edda; color: #155724; }
+.status-pending { background-color: #fff3cd; color: #856404; }
+.status-completed { background-color: #d1ecf1; color: #0c5460; }
+.status-cancelled { background-color: #f8d7da; color: #721c24; }
+
+/* =================================================================
+   科室列表页面样式 (department-list.css)
+   ================================================================= */
+.purple-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; }
+.btn-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; }
+.btn-purple:hover { background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%); color: white; }
+.btn-outline-purple { color: #667eea; border-color: #667eea; }
+.btn-outline-purple:hover { background-color: #667eea; color: white; }
+.bg-purple { background-color: #667eea !important; }
+.text-purple { color: #667eea !important; }
+.shadow-purple { box-shadow: 0 .25rem 0.5rem rgba(102,126,234,0.15) !important; }
+.department-stats { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+.stat-item { display: flex; align-items: center; font-size: 0.9rem; color: #666; }
+.doctor-item { transition: background-color 0.2s ease; }
+.doctor-item:hover { background-color: #e9d8fd !important; }
+.breadcrumb { background-color: #f8f9fa; border-radius: 0.375rem; }
+.extra-small { font-size: 0.75rem; }
+
+/* =================================================================
+   响应式
+   ================================================================= */
 @media (max-width: 768px) {
-  .hospital-header .navbar-brand {
-    font-size: 1.2rem;
-  }
-
-  .welcome-banner h1 {
-    font-size: 1.8rem;
-  }
-
-  .welcome-banner p {
-    font-size: 1rem;
-  }
-}
-
-/* 表单输入框焦点效果 */
-.form-control:focus, .form-select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* 按钮悬停效果 */
-.btn-primary {
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-}
-
-/* 卡片悬停效果 */
-.card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* 表格行悬停 */
-.table-hover tbody tr:hover {
-  background-color: rgba(13, 110, 253, 0.05);
-}
-
-/* 徽章样式 */
-.badge {
-  font-weight: 500;
-  padding: 0.4em 0.8em;
+    .hospital-banner { padding: 60px 0; text-align: center; }
+    .display-4 { font-size: 2rem; }
+    .min-vh-50 { min-height: auto; }
+    .container { padding: 0 15px; }
+    .nav-tabs { padding: 0.5rem; }
+    .nav-tabs .nav-link { padding: 0.5rem 1rem; font-size: 0.9rem; margin-right: 0.25rem; }
+    .card-header { padding: 1rem; }
+    .table { font-size: 0.85rem; }
+    .table th, .table td { padding: 0.75rem 0.5rem; }
+    .modal-body { padding: 1.5rem; }
+    .steps { flex-wrap: wrap; gap: 10px; }
+    .step-line { display: none; }
+    .department-stats { flex-wrap: wrap; gap: 10px; }
+    .stat-item { flex: 0 0 calc(50% - 5px); }
 }
