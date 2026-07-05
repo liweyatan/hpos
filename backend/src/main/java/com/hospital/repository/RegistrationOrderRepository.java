@@ -149,6 +149,15 @@ public interface RegistrationOrderRepository {
     int countByDoctorAndTime(Long doctorId, LocalDateTime registerTime);
 
     /**
+     * 统计医生同一小时内已预约数量
+     */
+    @Select("SELECT COUNT(*) FROM registration_order WHERE doctor_id = #{doctorId} " +
+            "AND DATE(register_time) = DATE(#{registerTime}) " +
+            "AND HOUR(register_time) = HOUR(#{registerTime}) " +
+            "AND status IN ('PENDING', 'CONFIRMED')")
+    int countByDoctorAndHour(Long doctorId, LocalDateTime registerTime);
+
+    /**
      * 统计医生当天的预约数量
      */
     @Select("SELECT COUNT(*) FROM registration_order WHERE doctor_id = #{doctorId} " +

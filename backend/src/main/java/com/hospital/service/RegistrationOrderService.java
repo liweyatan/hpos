@@ -143,10 +143,10 @@ public class RegistrationOrderService {
             }
         }
 
-        // 检查同一医生同一时间是否已有预约（只检查PENDING和CONFIRMED状态的预约）
-        int count = registrationOrderRepository.countByDoctorAndTime(order.getDoctorId(), order.getRegisterTime());
-        if (count > 0) {
-            throw new RuntimeException("该医生该时间段已有预约");
+        // 检查同一医生同一小时是否已约满（每小时限5人）
+        int count = registrationOrderRepository.countByDoctorAndHour(order.getDoctorId(), order.getRegisterTime());
+        if (count >= 5) {
+            throw new RuntimeException("该医生该时间段已约满");
         }
 
         // 设置默认状态（使用大写，与数据库一致）
@@ -183,10 +183,10 @@ public class RegistrationOrderService {
             }
         }
         
-        // 检查同一医生同一时间是否已有预约
-        int count = registrationOrderRepository.countByDoctorAndTime(order.getDoctorId(), order.getRegisterTime());
-        if (count > 0) {
-            throw new RuntimeException("该医生该时间段已有预约");
+        // 检查同一医生同一小时是否已约满（每小时限5人）
+        int count = registrationOrderRepository.countByDoctorAndHour(order.getDoctorId(), order.getRegisterTime());
+        if (count >= 5) {
+            throw new RuntimeException("该医生该时间段已约满");
         }
 
         // 设置默认状态
