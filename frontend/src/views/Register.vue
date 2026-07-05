@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { getDepartments, getDoctorsByDepartment, createOrder, findPatientByPhone } from '@/api/index.js'
+import { getDepartments, getDoctorsByDepartment, createOrder, findPatientByPhone, getBookedSlots } from '@/api/index.js'
 
 export default {
   name: 'RegisterView',
@@ -192,14 +192,45 @@ export default {
   methods: {
     async loadDepartments() { try { const res = await getDepartments(); this.departments = res.data || res || [] } catch (e) { this.showError('加载科室数据失败') } },
     async selectDepartment(dept) { this.selectedDepartment = dept; this.selectedDoctor = null; try { const res = await getDoctorsByDepartment(dept.id); this.doctors = res.data || res || [] } catch (e) { this.showError('加载医生数据失败') } },
-    selectDoctor(doctor) { this.selectedDoctor = doctor },
+    async selectDoctor(doctor) { this.selectedDoctor = doctor; if (this.selectedDate) await this.loadBookedSlots() },
+    getBaseTimeSlots() {
+      return [
+        { time: '08:00-08:30', startTime: '08:00' },
+        { time: '08:30-09:00', startTime: '08:30' },
+        { time: '09:00-09:30', startTime: '09:00' },
+        { time: '09:30-10:00', startTime: '09:30' },
+        { time: '10:00-10:30', startTime: '10:00' },
+        { time: '10:30-11:00', startTime: '10:30' },
+        { time: '14:00-14:30', startTime: '14:00' },
+        { time: '14:30-15:00', startTime: '14:30' },
+        { time: '15:00-15:30', startTime: '15:00' },
+        { time: '15:30-16:00', startTime: '15:30' },
+        { time: '16:00-16:30', startTime: '16:00' },
+        { time: '16:30-17:00', startTime: '16:30' }
+      ]
+    },
+    async loadBookedSlots() {
+      if (!this.selectedDoctor || !this.selectedDate) return
+      try {
+        const res = await getBookedSlots(this.selectedDoctor.id, this.selectedDate)
+        const booked = res.data || res || []
+        const base = this.getBaseTimeSlots()
+        this.timeSlots = base.map(s => ({
+          ...s,
+          available: !booked.includes(s.startTime)
+        }))
+      } catch (e) {
+        const base = this.getBaseTimeSlots()
+        this.timeSlots = base.map(s => ({ ...s, available: true }))
+      }
+    },
     async loadAvailableDates() {
       const today = new Date(); const dates = []
       for (let i = 0; i < 7; i++) { const d = new Date(today); d.setDate(today.getDate() + i); const days = ['日', '一', '二', '三', '四', '五', '六']; dates.push({ date: d.toISOString().split('T')[0], formattedDate: `${d.getMonth()+1}月${d.getDate()}日`, day: `星期${days[d.getDay()]}`, available: i > 0 }) }
       this.availableDates = dates; this.selectedDate = dates[1]?.date
-      this.timeSlots = [ { time: '08:00-08:30', available: true }, { time: '08:30-09:00', available: true }, { time: '09:00-09:30', available: false }, { time: '09:30-10:00', available: true }, { time: '10:00-10:30', available: true }, { time: '10:30-11:00', available: true }, { time: '14:00-14:30', available: true }, { time: '14:30-15:00', available: true }, { time: '15:00-15:30', available: true }, { time: '15:30-16:00', available: false }, { time: '16:00-16:30', available: true }, { time: '16:30-17:00', available: true } ]
+      this.timeSlots = this.getBaseTimeSlots().map(s => ({ ...s, available: true }))
     },
-    async selectDate(date) { this.selectedDate = date; this.selectedTime = null; await new Promise(resolve => setTimeout(resolve, 300)); this.timeSlots = [ { time: '08:00-08:30', available: true }, { time: '08:30-09:00', available: true }, { time: '09:00-09:30', available: false }, { time: '09:30-10:00', available: true }, { time: '10:00-10:30', available: true }, { time: '10:30-11:00', available: true }, { time: '14:00-14:30', available: true }, { time: '14:30-15:00', available: true }, { time: '15:00-15:30', available: true }, { time: '15:30-16:00', available: false }, { time: '16:00-16:30', available: true }, { time: '16:30-17:00', available: true } ] },
+    async selectDate(date) { this.selectedDate = date; this.selectedTime = null; await this.loadBookedSlots() },
     selectTime(time) { this.selectedTime = time },
     goToStep(step) { this.currentStep = step; window.scrollTo(0, 0) },
     useCurrentUserInfo() { this.appointmentInfo.patientName = localStorage.getItem('username') || ''; this.appointmentInfo.phone = localStorage.getItem('phone') || '' },

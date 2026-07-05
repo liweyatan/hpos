@@ -106,6 +106,10 @@ export function cancelOrder(id) {
   return request.put(`/registration-orders/${id}/status`, null, { params: { status: 'CANCELLED' } })
 }
 
+export function getBookedSlots(doctorId, date) {
+  return request.get(`/registration-orders/doctor/${doctorId}/booked-slots`, { params: { date } })
+}
+
 // ==================== 预约管理（管理员） ====================
 
 export function getAppointments() {

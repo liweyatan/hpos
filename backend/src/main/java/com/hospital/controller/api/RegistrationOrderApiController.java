@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 预约订单API控制器
@@ -163,6 +164,36 @@ public class RegistrationOrderApiController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "操作失败，请稍后重试");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 查询医生某天已预约的时间段
+     */
+    @GetMapping("/doctor/{doctorId}/booked-slots")
+    public ResponseEntity<Map<String, Object>> getBookedSlots(
+            @PathVariable("doctorId") Long doctorId,
+            @RequestParam("date") String date) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<RegistrationOrder> orders = registrationOrderService.getRegistrationOrdersByDoctorId(doctorId);
+            String targetDate = date;
+            List<String> bookedSlots = orders.stream()
+                .filter(o -> o.getRegisterTime() != null && !o.getStatus().equals("CANCELLED"))
+                .filter(o -> o.getRegisterTime().toString().startsWith(targetDate))
+                .map(o -> {
+                    int hour = o.getRegisterTime().getHour();
+                    int minute = o.getRegisterTime().getMinute();
+                    return String.format("%02d:%02d", hour, minute);
+                })
+                .collect(Collectors.toList());
+            response.put("success", true);
+            response.put("data", bookedSlots);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "查询失败：" + e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
