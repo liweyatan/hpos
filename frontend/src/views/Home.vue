@@ -17,7 +17,7 @@
               <h4 class="fw-bold mb-2">最近预约</h4>
               <template v-if="nearestOrder">
                 <p class="mb-1">{{ nearestOrder.doctorName || '医生' }}</p>
-                <p class="mb-0 opacity-75">{{ formatTime(nearestOrder.registerTime) }}</p>
+                <p class="mb-0 fw-bold">{{ formatTimeLeft(nearestOrder.registerTime) }}后就诊</p>
               </template>
               <template v-else>
                 <p class="mb-0">{{ auth.loggedIn ? '暂无预约' : '请先登录' }}</p>
@@ -132,14 +132,18 @@ export default {
     }
   },
   methods: {
-    formatTime(time) {
+    formatTimeLeft(time) {
       if (!time) return ''
-      const d = new Date(time)
-      const m = d.getMonth() + 1
-      const day = d.getDate()
-      const h = String(d.getHours()).padStart(2, '0')
-      const min = String(d.getMinutes()).padStart(2, '0')
-      return `${m}月${day}日 ${h}:${min}`
+      const now = new Date()
+      const target = new Date(time)
+      const diff = target - now
+      if (diff <= 0) return '已过期'
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      if (days > 0) return `${days}天${hours}小时`
+      if (hours > 0) return `${hours}小时${minutes}分钟`
+      return `${minutes}分钟`
     },
     async loadNearestOrder() {
       const patientId = localStorage.getItem('patientId')
