@@ -8,6 +8,13 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    // 去掉 Vite 自动加的 crossorigin 属性（导致浏览器 CORS 预检卡顿）
+    {
+      name: 'remove-crossorigin',
+      transformIndexHtml(html) {
+        return html.replace(/ crossorigin/g, '')
+      }
+    }
   ],
   resolve: {
     alias: {
