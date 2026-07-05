@@ -13,25 +13,25 @@
           </div>
           <div class="col-md-6">
             <div class="row text-center text-white mt-4 mt-md-0">
-              <div class="col-4">
+              <div class="col-6 mb-3">
                 <div class="stat-item">
-                  <i class="fas fa-user-md fa-2x mb-2"></i>
-                  <h3 class="fw-bold mb-0">50+</h3>
-                  <small class="opacity-75">专业医生</small>
+                  <i class="fas fa-clock fa-2x mb-2"></i>
+                  <h6 class="mb-1">最近预约</h6>
+                  <template v-if="nearestOrder">
+                    <small class="d-block">{{ nearestOrder.doctorName || '医生' }}</small>
+                    <small class="opacity-75">{{ formatTime(nearestOrder.registerTime) }}</small>
+                  </template>
+                  <template v-else>
+                    <small class="opacity-75">{{ auth.loggedIn ? '暂无预约' : '请先登录' }}</small>
+                  </template>
                 </div>
               </div>
-              <div class="col-4">
+              <div class="col-6 mb-3">
                 <div class="stat-item">
-                  <i class="fas fa-hospital fa-2x mb-2"></i>
-                  <h3 class="fw-bold mb-0">6</h3>
-                  <small class="opacity-75">重点科室</small>
-                </div>
-              </div>
-              <div class="col-4">
-                <div class="stat-item">
-                  <i class="fas fa-smile fa-2x mb-2"></i>
-                  <h3 class="fw-bold mb-0">10000+</h3>
-                  <small class="opacity-75">服务患者</small>
+                  <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                  <h6 class="mb-1">今日可预约</h6>
+                  <small class="d-block">{{ todayDoctors }} 位医生</small>
+                  <small class="opacity-75">可在线挂号</small>
                 </div>
               </div>
             </div>
@@ -125,8 +125,55 @@
 </template>
 
 <script>
+import { getOrders, getDoctors } from '@/api/index.js'
+import { getAuthState } from '@/api/auth.js'
+
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
+  data() {
+    return {
+      auth: getAuthState(),
+      nearestOrder: null,
+      todayDoctors: 0
+    }
+  },
+  methods: {
+    formatTime(time) {
+      if (!time) return ''
+      const d = new Date(time)
+      const m = d.getMonth() + 1
+      const day = d.getDate()
+      const h = String(d.getHours()).padStart(2, '0')
+      const min = String(d.getMinutes()).padStart(2, '0')
+      return `${m}月${day}日 ${h}:${min}`
+    },
+    async loadNearestOrder() {
+      const patientId = localStorage.getItem('patientId')
+      if (!patientId) return
+      try {
+        const res = await getOrders(patientId)
+        const orders = res.data || res || []
+        const now = new Date()
+        const upcoming = orders
+          .filter(o => o.status !== 'CANCELLED' && new Date(o.registerTime) >= now)
+          .sort((a, b) => new Date(a.registerTime) - new Date(b.registerTime))
+        if (upcoming.length > 0) {
+          this.nearestOrder = upcoming[0]
+        }
+      } catch (e) { /* ignore */ }
+    },
+    async loadDoctorCount() {
+      try {
+        const res = await getDoctors()
+        const doctors = res.data || res || []
+        this.todayDoctors = doctors.length
+      } catch (e) { /* ignore */ }
+    }
+  },
+  mounted() {
+    this.loadNearestOrder()
+    this.loadDoctorCount()
+  }
 }
 </script>
 
