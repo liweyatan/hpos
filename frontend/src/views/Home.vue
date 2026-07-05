@@ -12,28 +12,22 @@
             </a>
           </div>
           <div class="col-md-6">
-            <div class="row text-center text-white mt-4 mt-md-0">
-              <div class="col-6 mb-3">
-                <div class="stat-item">
-                  <i class="fas fa-clock fa-2x mb-2"></i>
-                  <h6 class="mb-1">最近预约</h6>
-                  <template v-if="nearestOrder">
-                    <small class="d-block">{{ nearestOrder.doctorName || '医生' }}</small>
-                    <small class="opacity-75">{{ formatTime(nearestOrder.registerTime) }}</small>
-                  </template>
-                  <template v-else>
-                    <small class="opacity-75">{{ auth.loggedIn ? '暂无预约' : '请先登录' }}</small>
-                  </template>
-                </div>
-              </div>
-              <div class="col-6 mb-3">
-                <div class="stat-item">
-                  <i class="fas fa-calendar-check fa-2x mb-2"></i>
-                  <h6 class="mb-1">今日可预约</h6>
-                  <small class="d-block">{{ todayDoctors }} 位医生</small>
-                  <small class="opacity-75">可在线挂号</small>
-                </div>
-              </div>
+            <div class="banner-info-item">
+              <i class="fas fa-clock fa-3x mb-3"></i>
+              <h4 class="fw-bold mb-2">最近预约</h4>
+              <template v-if="nearestOrder">
+                <p class="mb-1">{{ nearestOrder.doctorName || '医生' }}</p>
+                <p class="mb-0 opacity-75">{{ formatTime(nearestOrder.registerTime) }}</p>
+              </template>
+              <template v-else>
+                <p class="mb-0">{{ auth.loggedIn ? '暂无预约' : '请先登录' }}</p>
+              </template>
+            </div>
+            <div class="banner-info-item">
+              <i class="fas fa-calendar-check fa-3x mb-3"></i>
+              <h4 class="fw-bold mb-2">今日可预约</h4>
+              <p class="mb-1">{{ todayDoctors }} 位医生</p>
+              <p class="mb-0 opacity-75">可在线挂号</p>
             </div>
           </div>
         </div>
@@ -178,16 +172,22 @@ export default {
 </script>
 
 <style scoped>
-.stat-item {
+.banner-info-item {
+  text-align: center;
+  color: #fff;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 20px 10px;
+  border-radius: 16px;
+  padding: 30px 20px;
+  margin-bottom: 20px;
   backdrop-filter: blur(5px);
 }
-.stat-item h3 {
+.banner-info-item h4 {
   color: #fff;
+  font-size: 1.5rem;
 }
-.stat-item small {
-  color: rgba(255, 255, 255, 0.75);
+.banner-info-item p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  margin-bottom: 4px;
 }
 </style>
