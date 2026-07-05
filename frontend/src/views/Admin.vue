@@ -195,7 +195,7 @@
     </div>
 
     <footer class="bg-dark text-white py-4 mt-5">
-      <div class="container text-center"><p class="mb-0"><i class="fas fa-copyright me-1"></i>2025 <strong>医院管理系统</strong> 版权所有</p></div>
+      <div class="container text-center"><p class="mb-0"><i class="fas fa-copyright me-1"></i>2026 <strong>智慧医院管理系统</strong> 版权所有</p></div>
     </footer>
   </div>
 </template>
