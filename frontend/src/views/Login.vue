@@ -41,7 +41,7 @@
               <hr class="my-4">
               <div class="text-center">
                 <p class="text-muted mb-0">还没有账号？</p>
-                <a href="/register" class="btn btn-outline-primary btn-sm mt-2" @click.prevent="$router.push('/register')">
+                <a href="/register-user" class="btn btn-outline-primary btn-sm mt-2" @click.prevent="$router.push('/register-user')">
                   <i class="fas fa-user-plus me-1"></i>立即注册
                 </a>
               </div>
