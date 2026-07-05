@@ -79,7 +79,7 @@ export default {
     }
   },
   computed: {
-    patientId() { return parseInt(localStorage.getItem('patientId') || '1') },
+    patientId() { return localStorage.getItem('patientId') },
     filtered() {
       if (!this.statusFilter) return this.orders
       return this.orders.filter(o => o.status === this.statusFilter)
@@ -97,6 +97,7 @@ export default {
     async loadOrders() {
       this.loading = true
       try {
+        if (!this.patientId) { this.orders = []; return }
         const res = await getOrders(this.patientId)
         this.orders = res.data || res || []
       }

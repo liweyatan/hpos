@@ -163,7 +163,7 @@ footer { background: #343a40 !important; color: white; margin-top: auto; }
 .time-slot { border: 2px solid #e0f0ff; border-radius: 8px; padding: 10px; text-align: center; transition: all 0.3s ease; cursor: pointer; background: white; }
 .time-slot:hover:not(.unavailable) { border-color: #1e90ff; }
 .time-slot.selected { border-color: #1e90ff; background-color: #f0f8ff; }
-.time-slot.unavailable { opacity: 0.5; cursor: not-allowed; }
+.time-slot.unavailable { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
 /* 日期选择器（横向滚动） */
 .date-selector { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
