@@ -226,7 +226,7 @@ public class RegistrationOrderApiController {
                 }
             }
 
-            int maxPerHour = 5;
+            int maxPerHour = doctorScheduleService.getMaxPerHour(doctorId, dayOfWeek);
             List<Map<String, Object>> slots = new ArrayList<>();
             for (String slot : allSlots) {
                 int hour = Integer.parseInt(slot.split(":")[0]);

@@ -112,6 +112,7 @@ CREATE TABLE `registration_order`  (
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'PENDING' COMMENT '订单状态（PENDING:待处理, CONFIRMED:已确认, CANCELLED:已取消, COMPLETED:已完成）',
   `symptoms` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '症状描述',
   `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '备注信息',
+  `appointment_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '预约号',
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
@@ -126,41 +127,42 @@ CREATE TABLE `registration_order`  (
 -- ----------------------------
 -- Records of registration_order
 -- ----------------------------
-INSERT INTO `registration_order` VALUES (1, 1, 1, '2025-12-22 09:00:00', 'pending', '头痛', NULL, '2025-12-20 18:25:51', '2025-12-20 18:25:51');
-INSERT INTO `registration_order` VALUES (2, 1, 1, '2025-12-25 09:00:00', 'pending', '头痛', NULL, '2025-12-20 18:30:21', '2025-12-20 18:30:21');
-INSERT INTO `registration_order` VALUES (3, 1, 1, '2025-12-21 09:00:00', 'pending', '感冒发烧', NULL, '2025-12-20 18:51:22', '2025-12-20 18:51:22');
-INSERT INTO `registration_order` VALUES (4, 1, 1, '2025-12-21 14:30:00', 'pending', NULL, NULL, '2025-12-20 18:58:10', '2025-12-20 18:58:10');
-INSERT INTO `registration_order` VALUES (5, 1, 1, '2025-12-30 10:00:00', 'PENDING', '测试症状', NULL, '2025-12-20 21:27:11', '2025-12-20 21:27:11');
-INSERT INTO `registration_order` VALUES (6, 1, 1, '2025-12-21 10:30:00', 'PENDING', '', NULL, '2025-12-20 23:56:12', '2025-12-20 23:56:12');
-INSERT INTO `registration_order` VALUES (7, 1, 4, '2025-12-21 08:30:00', 'PENDING', '测试数据库连接01', NULL, '2025-12-20 23:58:56', '2025-12-20 23:58:56');
-INSERT INTO `registration_order` VALUES (8, 1, 4, '2025-12-21 14:00:00', 'PENDING', '测试11111', NULL, '2025-12-20 23:59:41', '2025-12-20 23:59:41');
-INSERT INTO `registration_order` VALUES (9, 1, 3, '2025-12-21 10:00:00', 'PENDING', '', NULL, '2025-12-21 00:00:16', '2025-12-21 00:00:16');
-INSERT INTO `registration_order` VALUES (10, 1, 4, '2025-12-21 08:00:00', 'CANCELLED', '', NULL, '2025-12-21 00:00:47', '2025-12-28 15:02:18');
-INSERT INTO `registration_order` VALUES (11, 1, 3, '2025-12-28 10:00:00', 'PENDING', '', NULL, '2025-12-22 18:12:49', '2025-12-22 18:12:49');
-INSERT INTO `registration_order` VALUES (12, 1, 3, '2025-12-23 14:00:00', 'PENDING', '', NULL, '2025-12-22 18:13:04', '2025-12-22 18:13:04');
-INSERT INTO `registration_order` VALUES (13, 1, 1, '2025-12-23 10:30:00', 'PENDING', '', NULL, '2025-12-22 19:43:30', '2025-12-22 19:43:30');
-INSERT INTO `registration_order` VALUES (14, 1, 2, '2025-12-25 14:30:00', 'CONFIRMED', '腹痛，需要外科检查', '优先安排', '2025-12-22 20:47:47', '2025-12-22 20:47:47');
-INSERT INTO `registration_order` VALUES (15, 1, 5, '2025-12-26 10:00:00', 'PENDING', '妇科检查', '常规体检', '2025-12-22 20:48:12', '2025-12-22 20:48:12');
-INSERT INTO `registration_order` VALUES (16, 1, 6, '2025-12-27 09:00:00', 'CANCELLED', '视力模糊，需要眼科检查', '患者临时有事取消', '2025-12-22 20:48:25', '2025-12-22 20:48:25');
-INSERT INTO `registration_order` VALUES (17, 1, 4, '2025-12-29 10:30:00', 'PENDING', '儿童感冒', '需要儿科医生检查', '2025-12-22 20:51:11', '2025-12-22 20:51:11');
-INSERT INTO `registration_order` VALUES (18, 1, 4, '2025-12-26 14:00:00', 'PENDING', '', NULL, '2025-12-22 22:40:16', '2025-12-22 22:40:16');
-INSERT INTO `registration_order` VALUES (19, 1, 3, '2025-12-30 10:30:00', 'PENDING', '', NULL, '2025-12-29 17:11:22', '2025-12-29 17:11:22');
-INSERT INTO `registration_order` VALUES (20, 1, 3, '2025-12-30 10:00:00', 'PENDING', '', NULL, '2025-12-30 00:37:11', '2025-12-30 00:37:11');
-INSERT INTO `registration_order` VALUES (21, 1, 3, '2026-01-01 08:30:00', 'CANCELLED', '', NULL, '2025-12-31 18:39:02', '2025-12-31 18:39:32');
-INSERT INTO `registration_order` VALUES (22, 1, 4, '2026-01-01 08:30:00', 'PENDING', '', NULL, '2025-12-31 18:39:55', '2025-12-31 18:39:55');
-INSERT INTO `registration_order` VALUES (25, 4, 6, '2026-01-01 08:30:00', 'PENDING', '', NULL, '2025-12-31 18:52:11', '2025-12-31 18:52:11');
-INSERT INTO `registration_order` VALUES (26, 4, 3, '2026-01-06 16:30:00', 'CANCELLED', '', NULL, '2025-12-31 18:52:54', '2025-12-31 23:10:19');
-INSERT INTO `registration_order` VALUES (27, 1, 2, '2026-01-01 08:30:00', 'PENDING', '', NULL, '2025-12-31 21:55:38', '2025-12-31 21:55:38');
-INSERT INTO `registration_order` VALUES (28, 1, 3, '2026-01-01 10:00:00', 'PENDING', '', NULL, '2025-12-31 21:56:01', '2025-12-31 21:56:01');
-INSERT INTO `registration_order` VALUES (29, 1, 3, '2026-01-06 10:30:00', 'PENDING', '', NULL, '2025-12-31 21:57:44', '2025-12-31 21:57:44');
-INSERT INTO `registration_order` VALUES (30, 1, 2, '2026-01-01 10:30:00', 'PENDING', '', NULL, '2025-12-31 22:06:13', '2025-12-31 22:06:13');
-INSERT INTO `registration_order` VALUES (31, 1, 4, '2026-01-01 14:30:00', 'PENDING', '', NULL, '2025-12-31 22:07:11', '2025-12-31 22:07:11');
-INSERT INTO `registration_order` VALUES (32, 1, 6, '2026-01-06 10:30:00', 'PENDING', '', NULL, '2025-12-31 22:10:36', '2025-12-31 22:10:36');
-INSERT INTO `registration_order` VALUES (33, 5, 6, '2026-01-04 08:30:00', 'PENDING', '', '', '2025-12-31 22:19:19', '2025-12-31 22:19:19');
-INSERT INTO `registration_order` VALUES (34, 10, 2, '2026-01-01 16:30:00', 'PENDING', '', '', '2025-12-31 23:07:33', '2025-12-31 23:07:33');
-INSERT INTO `registration_order` VALUES (35, 10, 2, '2026-01-06 16:30:00', 'PENDING', '', '', '2025-12-31 23:08:11', '2025-12-31 23:08:11');
-INSERT INTO `registration_order` VALUES (36, 10, 6, '2026-01-05 10:30:00', 'PENDING', '', '', '2025-12-31 23:09:27', '2025-12-31 23:09:27');
-INSERT INTO `registration_order` VALUES (37, 4, 3, '2026-01-06 10:00:00', 'PENDING', '', '', '2025-12-31 23:10:12', '2025-12-31 23:10:12');
+INSERT INTO `registration_order` (`id`, `patient_id`, `doctor_id`, `register_time`, `status`, `symptoms`, `notes`, `appointment_no`, `create_time`, `update_time`) VALUES
+(1, 1, 1, '2025-12-22 09:00:00', 'pending', '头痛', NULL, NULL, '2025-12-20 18:25:51', '2025-12-20 18:25:51'),
+(2, 1, 1, '2025-12-25 09:00:00', 'pending', '头痛', NULL, NULL, '2025-12-20 18:30:21', '2025-12-20 18:30:21'),
+(3, 1, 1, '2025-12-21 09:00:00', 'pending', '感冒发烧', NULL, NULL, '2025-12-20 18:51:22', '2025-12-20 18:51:22'),
+(4, 1, 1, '2025-12-21 14:30:00', 'pending', NULL, NULL, NULL, '2025-12-20 18:58:10', '2025-12-20 18:58:10'),
+(5, 1, 1, '2025-12-30 10:00:00', 'PENDING', '测试症状', NULL, NULL, '2025-12-20 21:27:11', '2025-12-20 21:27:11'),
+(6, 1, 1, '2025-12-21 10:30:00', 'PENDING', '', NULL, NULL, '2025-12-20 23:56:12', '2025-12-20 23:56:12'),
+(7, 1, 4, '2025-12-21 08:30:00', 'PENDING', '测试数据库连接01', NULL, NULL, '2025-12-20 23:58:56', '2025-12-20 23:58:56'),
+(8, 1, 4, '2025-12-21 14:00:00', 'PENDING', '测试11111', NULL, NULL, '2025-12-20 23:59:41', '2025-12-20 23:59:41'),
+(9, 1, 3, '2025-12-21 10:00:00', 'PENDING', '', NULL, NULL, '2025-12-21 00:00:16', '2025-12-21 00:00:16'),
+(10, 1, 4, '2025-12-21 08:00:00', 'CANCELLED', '', NULL, NULL, '2025-12-21 00:00:47', '2025-12-28 15:02:18'),
+(11, 1, 3, '2025-12-28 10:00:00', 'PENDING', '', NULL, NULL, '2025-12-22 18:12:49', '2025-12-22 18:12:49'),
+(12, 1, 3, '2025-12-23 14:00:00', 'PENDING', '', NULL, NULL, '2025-12-22 18:13:04', '2025-12-22 18:13:04'),
+(13, 1, 1, '2025-12-23 10:30:00', 'PENDING', '', NULL, NULL, '2025-12-22 19:43:30', '2025-12-22 19:43:30'),
+(14, 1, 2, '2025-12-25 14:30:00', 'CONFIRMED', '腹痛，需要外科检查', '优先安排', NULL, '2025-12-22 20:47:47', '2025-12-22 20:47:47'),
+(15, 1, 5, '2025-12-26 10:00:00', 'PENDING', '妇科检查', '常规体检', NULL, '2025-12-22 20:48:12', '2025-12-22 20:48:12'),
+(16, 1, 6, '2025-12-27 09:00:00', 'CANCELLED', '视力模糊，需要眼科检查', '患者临时有事取消', NULL, '2025-12-22 20:48:25', '2025-12-22 20:48:25'),
+(17, 1, 4, '2025-12-29 10:30:00', 'PENDING', '儿童感冒', '需要儿科医生检查', NULL, '2025-12-22 20:51:11', '2025-12-22 20:51:11'),
+(18, 1, 4, '2025-12-26 14:00:00', 'PENDING', '', NULL, NULL, '2025-12-22 22:40:16', '2025-12-22 22:40:16'),
+(19, 1, 3, '2025-12-30 10:30:00', 'PENDING', '', NULL, NULL, '2025-12-29 17:11:22', '2025-12-29 17:11:22'),
+(20, 1, 3, '2025-12-30 10:00:00', 'PENDING', '', NULL, NULL, '2025-12-30 00:37:11', '2025-12-30 00:37:11'),
+(21, 1, 3, '2026-01-01 08:30:00', 'CANCELLED', '', NULL, NULL, '2025-12-31 18:39:02', '2025-12-31 18:39:32'),
+(22, 1, 4, '2026-01-01 08:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 18:39:55', '2025-12-31 18:39:55'),
+(25, 4, 6, '2026-01-01 08:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 18:52:11', '2025-12-31 18:52:11'),
+(26, 4, 3, '2026-01-06 16:30:00', 'CANCELLED', '', NULL, NULL, '2025-12-31 18:52:54', '2025-12-31 23:10:19'),
+(27, 1, 2, '2026-01-01 08:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 21:55:38', '2025-12-31 21:55:38'),
+(28, 1, 3, '2026-01-01 10:00:00', 'PENDING', '', NULL, NULL, '2025-12-31 21:56:01', '2025-12-31 21:56:01'),
+(29, 1, 3, '2026-01-06 10:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 21:57:44', '2025-12-31 21:57:44'),
+(30, 1, 2, '2026-01-01 10:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 22:06:13', '2025-12-31 22:06:13'),
+(31, 1, 4, '2026-01-01 14:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 22:07:11', '2025-12-31 22:07:11'),
+(32, 1, 6, '2026-01-06 10:30:00', 'PENDING', '', NULL, NULL, '2025-12-31 22:10:36', '2025-12-31 22:10:36'),
+(33, 5, 6, '2026-01-04 08:30:00', 'PENDING', '', '', NULL, '2025-12-31 22:19:19', '2025-12-31 22:19:19'),
+(34, 10, 2, '2026-01-01 16:30:00', 'PENDING', '', '', NULL, '2025-12-31 23:07:33', '2025-12-31 23:07:33'),
+(35, 10, 2, '2026-01-06 16:30:00', 'PENDING', '', '', NULL, '2025-12-31 23:08:11', '2025-12-31 23:08:11'),
+(36, 10, 6, '2026-01-05 10:30:00', 'PENDING', '', '', NULL, '2025-12-31 23:09:27', '2025-12-31 23:09:27'),
+(37, 4, 3, '2026-01-06 10:00:00', 'PENDING', '', '', NULL, '2025-12-31 23:10:12', '2025-12-31 23:10:12');
 
 -- ----------------------------
 -- Table structure for user

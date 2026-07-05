@@ -25,6 +25,9 @@ public class RegistrationOrderService {
     @Autowired
     private PatientRepository patientRepository;
 
+    @Autowired
+    private DoctorScheduleService doctorScheduleService;
+
     /**
      * 获取所有挂号订单（包含患者、医生、科室信息）
      */
@@ -143,9 +146,11 @@ public class RegistrationOrderService {
             }
         }
 
-        // 检查同一医生同一小时是否已约满（每小时限5人）
+        // 检查同一医生同一小时是否已约满
+        int dayOfWeek = order.getRegisterTime().getDayOfWeek().getValue();
+        int maxPerHour = doctorScheduleService.getMaxPerHour(order.getDoctorId(), dayOfWeek);
         int count = registrationOrderRepository.countByDoctorAndHour(order.getDoctorId(), order.getRegisterTime());
-        if (count >= 5) {
+        if (count >= maxPerHour) {
             throw new RuntimeException("该医生该时间段已约满");
         }
 
@@ -183,9 +188,11 @@ public class RegistrationOrderService {
             }
         }
         
-        // 检查同一医生同一小时是否已约满（每小时限5人）
+        // 检查同一医生同一小时是否已约满
+        int dayOfWeek = order.getRegisterTime().getDayOfWeek().getValue();
+        int maxPerHour = doctorScheduleService.getMaxPerHour(order.getDoctorId(), dayOfWeek);
         int count = registrationOrderRepository.countByDoctorAndHour(order.getDoctorId(), order.getRegisterTime());
-        if (count >= 5) {
+        if (count >= maxPerHour) {
             throw new RuntimeException("该医生该时间段已约满");
         }
 

@@ -193,7 +193,7 @@ export default {
   methods: {
     async loadDepartments() { try { const res = await getDepartments(); this.departments = res.data || res || [] } catch (e) { this.showError('加载科室数据失败') } },
     async selectDepartment(dept) { this.selectedDepartment = dept; this.selectedDoctor = null; try { const res = await getDoctorsByDepartment(dept.id); this.doctors = res.data || res || [] } catch (e) { this.showError('加载医生数据失败') } },
-    async selectDoctor(doctor) { this.selectedDoctor = doctor; if (this.selectedDate) await this.loadBookedSlots() },
+    async selectDoctor(doctor) { this.selectedDoctor = doctor; this.selectedTime = null; if (this.selectedDate) await this.loadBookedSlots() },
     async loadBookedSlots() {
       if (!this.selectedDoctor || !this.selectedDate) return
       try {
@@ -237,7 +237,11 @@ export default {
       try {
         if (!this.appointmentInfo.patientName) throw new Error('请输入就诊人姓名')
         if (!this.appointmentInfo.phone) throw new Error('请输入手机号')
-        await createOrder({ doctorId: this.selectedDoctor.id, registerTime: `${this.selectedDate}T${this.selectedTime.split('-')[0]}:00`, symptoms: this.appointmentInfo.symptoms, notes: '', patientName: this.appointmentInfo.patientName, patientPhone: this.appointmentInfo.phone, patientIdCard: this.appointmentInfo.idCard, patientGender: null })
+        const res = await createOrder({ doctorId: this.selectedDoctor.id, registerTime: `${this.selectedDate}T${this.selectedTime.split('-')[0]}:00`, symptoms: this.appointmentInfo.symptoms, notes: '', patientName: this.appointmentInfo.patientName, patientPhone: this.appointmentInfo.phone, patientIdCard: this.appointmentInfo.idCard, patientGender: null })
+        if (res && res.patientId) {
+          localStorage.setItem('patientId', String(res.patientId))
+          localStorage.setItem('patientName', this.appointmentInfo.patientName)
+        }
         this.submitted = true
         this.showSuccess('预约成功！')
         setTimeout(() => { this.$router.push('/orders') }, 800)

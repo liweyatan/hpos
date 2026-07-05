@@ -9,6 +9,7 @@ public class DoctorSchedule {
     private LocalTime startTime;
     private LocalTime endTime;
     private Integer slotDuration;
+    private Integer maxPerHour;
     private Boolean active;
 
     public Long getId() { return id; }
@@ -23,6 +24,8 @@ public class DoctorSchedule {
     public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
     public Integer getSlotDuration() { return slotDuration; }
     public void setSlotDuration(Integer slotDuration) { this.slotDuration = slotDuration; }
+    public Integer getMaxPerHour() { return maxPerHour; }
+    public void setMaxPerHour(Integer maxPerHour) { this.maxPerHour = maxPerHour; }
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
 }

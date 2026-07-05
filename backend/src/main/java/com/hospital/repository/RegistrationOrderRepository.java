@@ -116,8 +116,8 @@ public interface RegistrationOrderRepository {
     /**
      * 新增挂号订单
      */
-    @Insert("INSERT INTO registration_order(patient_id, doctor_id, register_time, status, symptoms, notes) " +
-            "VALUES(#{patientId}, #{doctorId}, #{registerTime}, #{status}, #{symptoms}, #{notes})")
+    @Insert("INSERT INTO registration_order(patient_id, doctor_id, register_time, status, symptoms, notes, appointment_no) " +
+            "VALUES(#{patientId}, #{doctorId}, #{registerTime}, #{status}, #{symptoms}, #{notes}, #{appointmentNo})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(RegistrationOrder order);
 
@@ -154,7 +154,7 @@ public interface RegistrationOrderRepository {
     @Select("SELECT COUNT(*) FROM registration_order WHERE doctor_id = #{doctorId} " +
             "AND DATE(register_time) = DATE(#{registerTime}) " +
             "AND HOUR(register_time) = HOUR(#{registerTime}) " +
-            "AND status IN ('PENDING', 'CONFIRMED')")
+            "AND LOWER(status) IN ('pending', 'confirmed')")
     int countByDoctorAndHour(Long doctorId, LocalDateTime registerTime);
 
     /**

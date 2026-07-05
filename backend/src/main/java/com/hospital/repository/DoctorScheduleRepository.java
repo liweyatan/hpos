@@ -16,6 +16,7 @@ public interface DoctorScheduleRepository {
         @Result(property = "startTime", column = "start_time"),
         @Result(property = "endTime", column = "end_time"),
         @Result(property = "slotDuration", column = "slot_duration"),
+        @Result(property = "maxPerHour", column = "max_per_hour"),
         @Result(property = "active", column = "active")
     })
     List<DoctorSchedule> findByDoctorAndDay(Long doctorId, Integer dayOfWeek);

@@ -33,4 +33,10 @@ public class DoctorScheduleService {
         }
         return slots;
     }
+
+    public int getMaxPerHour(Long doctorId, int dayOfWeek) {
+        List<DoctorSchedule> schedules = doctorScheduleRepository.findByDoctorAndDay(doctorId, dayOfWeek);
+        if (schedules.isEmpty()) return 5;
+        return schedules.get(0).getMaxPerHour() != null ? schedules.get(0).getMaxPerHour() : 5;
+    }
 }
