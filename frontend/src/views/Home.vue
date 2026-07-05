@@ -11,6 +11,31 @@
               <i class="fas fa-plus-circle me-2"></i>立即预约
             </a>
           </div>
+          <div class="col-md-6">
+            <div class="row text-center text-white mt-4 mt-md-0">
+              <div class="col-4">
+                <div class="stat-item">
+                  <i class="fas fa-user-md fa-2x mb-2"></i>
+                  <h3 class="fw-bold mb-0">50+</h3>
+                  <small class="opacity-75">专业医生</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-item">
+                  <i class="fas fa-hospital fa-2x mb-2"></i>
+                  <h3 class="fw-bold mb-0">6</h3>
+                  <small class="opacity-75">重点科室</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-item">
+                  <i class="fas fa-smile fa-2x mb-2"></i>
+                  <h3 class="fw-bold mb-0">10000+</h3>
+                  <small class="opacity-75">服务患者</small>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -104,3 +129,18 @@ export default {
   name: 'HomeView'
 }
 </script>
+
+<style scoped>
+.stat-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px 10px;
+  backdrop-filter: blur(5px);
+}
+.stat-item h3 {
+  color: #fff;
+}
+.stat-item small {
+  color: rgba(255, 255, 255, 0.75);
+}
+</style>
