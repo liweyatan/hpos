@@ -26,7 +26,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const auth = getAuthState()
-  const publicPages = ['Home', 'Login', 'RegisterUser', 'DepartmentList']
+  const publicPages = ['Home', 'Login', 'RegisterUser', 'DepartmentList', 'Register']
 
   if (publicPages.includes(to.name)) {
     next()
