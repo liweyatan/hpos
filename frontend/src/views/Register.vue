@@ -149,7 +149,7 @@
             <div class="d-grid gap-2">
               <button v-if="currentStep > 1" class="btn btn-outline-secondary" @click="goToStep(currentStep - 1)"><i class="fas fa-arrow-left me-2"></i>上一步</button>
               <button v-if="currentStep < 4" class="btn btn-primary" @click="goToStep(currentStep + 1)" :disabled="!canProceed">下一步 <i class="fas fa-arrow-right ms-2"></i></button>
-              <button v-if="currentStep === 4" class="btn btn-success" @click="confirmAppointment" :disabled="loading"><i v-if="loading" class="fas fa-spinner fa-spin me-2"></i>{{ loading ? '提交中...' : '确认预约' }}</button>
+              <button v-if="currentStep === 4" class="btn btn-success" @click="confirmAppointment" :disabled="loading || submitted"><i v-if="loading" class="fas fa-spinner fa-spin me-2"></i>{{ loading ? '提交中...' : (submitted ? '已提交' : '确认预约') }}</button>
               <a href="/" class="btn btn-outline-secondary" @click.prevent="$router.push('/')"><i class="fas fa-times me-2"></i>取消</a>
             </div>
           </div>
@@ -170,7 +170,7 @@ export default {
       availableDates: [], selectedDate: null, timeSlots: [], selectedTime: null,
       filter: { title: '', feeRange: '', rating: 0 },
       appointmentInfo: { patientName: '', phone: localStorage.getItem('phone') || '', idCard: '', symptoms: '' },
-      loading: false, errorMessage: '', successMessage: '', showErrorMessage: false, showSuccessMessage: false, messageTimer: null
+      loading: false, submitted: false, errorMessage: '', successMessage: '', showErrorMessage: false, showSuccessMessage: false, messageTimer: null
     }
   },
   computed: {
@@ -213,8 +213,9 @@ export default {
         if (!this.appointmentInfo.patientName) throw new Error('请输入就诊人姓名')
         if (!this.appointmentInfo.phone) throw new Error('请输入手机号')
         await createOrder({ doctorId: this.selectedDoctor.id, registerTime: `${this.selectedDate}T${this.selectedTime.split('-')[0]}:00`, symptoms: this.appointmentInfo.symptoms, notes: '', patientName: this.appointmentInfo.patientName, patientPhone: this.appointmentInfo.phone, patientIdCard: this.appointmentInfo.idCard, patientGender: null })
+        this.submitted = true
         this.showSuccess('预约成功！')
-        setTimeout(() => { this.$router.push('/orders') }, 3000)
+        setTimeout(() => { this.$router.push('/orders') }, 800)
       } catch (e) { this.showError(e.message || '预约失败') }
       finally { this.loading = false }
     },
