@@ -92,6 +92,7 @@
                   <div class="time-slot" :class="{ selected: selectedTime === slot.time, unavailable: !slot.available }" @click="slot.available && selectTime(slot.time)">
                     {{ slot.time }}
                     <span v-if="!slot.available" class="badge bg-secondary ms-1">已满</span>
+                    <span v-else class="badge bg-success ms-1">余{{ slot.remaining }}</span>
                   </div>
                 </div>
               </div>
