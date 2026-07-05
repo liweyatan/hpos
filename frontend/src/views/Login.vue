@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login-page">
     <div class="container mt-5">
       <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
@@ -47,15 +47,10 @@
               </div>
             </div>
           </div>
-          <div class="alert alert-info mt-3">
-            <h6 class="alert-heading">测试账户：</h6>
-            <p class="mb-1">管理员: <strong>kobe</strong> / <strong>123456</strong></p>
-            <p class="mb-0">用户: <strong>kobe1</strong> / <strong>123456</strong></p>
-          </div>
         </div>
       </div>
     </div>
-    <footer class="bg-dark text-white py-4 mt-5">
+    <footer class="login-footer bg-dark text-white py-4">
       <div class="container text-center">
         <p class="mb-0"><i class="fas fa-copyright me-1"></i>2025 <strong>智慧医院管理系统</strong> 版权所有</p>
       </div>
@@ -106,3 +101,17 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.login-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.login-page .container {
+  flex: 1;
+}
+.login-footer {
+  margin-top: auto;
+}
+</style>
