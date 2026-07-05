@@ -26,8 +26,7 @@
             <div class="banner-info-item">
               <i class="fas fa-calendar-check fa-3x mb-3"></i>
               <h4 class="fw-bold mb-2">今日可预约</h4>
-              <p class="mb-1">{{ todayDoctors }} 位医生</p>
-              <p class="mb-0 opacity-75">可在线挂号</p>
+              <p class="mb-1 fw-bold">{{ todayDoctors }} 位医生可在线挂号</p>
             </div>
           </div>
         </div>
