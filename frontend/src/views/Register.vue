@@ -198,10 +198,18 @@ export default {
       if (!this.selectedDoctor || !this.selectedDate) return
       try {
         const res = await getAvailableSlots(this.selectedDoctor.id, this.selectedDate)
-        this.timeSlots = (res.data || res || []).map(s => ({
-          time: s.time + '-' + this.addMinutes(s.time, 30),
-          available: s.available
-        }))
+        const slots = res.data || res || []
+        const hourMap = {}
+        for (const s of slots) {
+          const hour = s.time.split(':')[0]
+          if (!hourMap[hour]) {
+            hourMap[hour] = { time: hour + ':00-' + this.addMinutes(hour + ':00', 60), available: s.available, remaining: s.remaining }
+          } else {
+            hourMap[hour].available = hourMap[hour].available || s.available
+            hourMap[hour].remaining = Math.max(hourMap[hour].remaining, s.remaining)
+          }
+        }
+        this.timeSlots = Object.values(hourMap)
       } catch (e) {
         this.timeSlots = []
       }
