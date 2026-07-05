@@ -110,6 +110,10 @@ export function getBookedSlots(doctorId, date) {
   return request.get(`/registration-orders/doctor/${doctorId}/booked-slots`, { params: { date } })
 }
 
+export function getAvailableSlots(doctorId, date) {
+  return request.get(`/registration-orders/doctor/${doctorId}/available-slots`, { params: { date } })
+}
+
 // ==================== 预约管理（管理员） ====================
 
 export function getAppointments() {

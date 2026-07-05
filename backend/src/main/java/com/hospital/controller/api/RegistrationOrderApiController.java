@@ -3,6 +3,7 @@ package com.hospital.controller.api;
 import com.hospital.entity.RegistrationOrder;
 import com.hospital.entity.Patient;
 import com.hospital.service.RegistrationOrderService;
+import com.hospital.service.DoctorScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class RegistrationOrderApiController {
 
     @Autowired
     private RegistrationOrderService registrationOrderService;
+
+    @Autowired
+    private DoctorScheduleService doctorScheduleService;
 
     /**
      * 获取患者的所有预约记录
@@ -190,6 +194,43 @@ public class RegistrationOrderApiController {
                 .collect(Collectors.toList());
             response.put("success", true);
             response.put("data", bookedSlots);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "查询失败：" + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 获取医生某天可预约的时间段（排班减去已预约）
+     */
+    @GetMapping("/doctor/{doctorId}/available-slots")
+    public ResponseEntity<Map<String, Object>> getAvailableSlots(
+            @PathVariable("doctorId") Long doctorId,
+            @RequestParam("date") String date) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            java.time.LocalDate targetDate = java.time.LocalDate.parse(date);
+            int dayOfWeek = targetDate.getDayOfWeek().getValue();
+            List<String> allSlots = doctorScheduleService.generateTimeSlots(doctorId, dayOfWeek);
+
+            List<RegistrationOrder> booked = registrationOrderService.getRegistrationOrdersByDoctorId(doctorId);
+            List<String> bookedTimes = booked.stream()
+                .filter(o -> o.getRegisterTime() != null && !o.getStatus().equals("CANCELLED"))
+                .filter(o -> o.getRegisterTime().toLocalDate().equals(targetDate))
+                .map(o -> String.format("%02d:%02d", o.getRegisterTime().getHour(), o.getRegisterTime().getMinute()))
+                .collect(Collectors.toList());
+
+            List<Map<String, Object>> slots = new ArrayList<>();
+            for (String slot : allSlots) {
+                Map<String, Object> slotMap = new HashMap<>();
+                slotMap.put("time", slot);
+                slotMap.put("available", !bookedTimes.contains(slot));
+                slots.add(slotMap);
+            }
+            response.put("success", true);
+            response.put("data", slots);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             response.put("success", false);
