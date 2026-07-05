@@ -116,8 +116,8 @@ public interface RegistrationOrderRepository {
     /**
      * 新增挂号订单
      */
-    @Insert("INSERT INTO registration_order(patient_id, doctor_id, register_time, status, symptoms, notes, appointment_no) " +
-            "VALUES(#{patientId}, #{doctorId}, #{registerTime}, #{status}, #{symptoms}, #{notes}, #{appointmentNo})")
+    @Insert("INSERT INTO registration_order(patient_id, doctor_id, register_time, status, symptoms, notes) " +
+            "VALUES(#{patientId}, #{doctorId}, #{registerTime}, #{status}, #{symptoms}, #{notes})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(RegistrationOrder order);
 
