@@ -26,7 +26,6 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import './assets/main.css';
 
 .main-content { min-height: calc(100vh - 60px); }
