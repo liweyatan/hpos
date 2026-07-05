@@ -41,7 +41,7 @@ body {
 
 /* ===== 卡片 (styles.css) ===== */
 .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; border: 1px solid rgba(0,123,255,0.1); }
-.card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+.card:hover { transform: translateY(-3.5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
 .card-header { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-bottom: 2px solid rgba(0,123,255,0.1); padding: 1.25rem 1.5rem; }
 .card-title { color: #495057; font-weight: 600; margin: 0; }
 .feature-icon { width: 80px; height: 80px; background: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(0,86,179,0.05) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
@@ -140,7 +140,7 @@ footer { background: #343a40 !important; color: white; margin-top: auto; }
 .department-card { border: 2px solid #e0f0ff; border-radius: 10px; padding: 15px; display: flex; align-items: center; transition: all 0.3s ease; cursor: pointer; background: white; }
 .department-icon { width: 50px; height: 50px; border-radius: 50%; background-color: #e0f0ff; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #1e90ff; font-size: 1.2rem; }
 .department-info h6 { margin-bottom: 5px; color: #333; }
-.department-card:hover { border-color: #1e90ff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(30,144,255,0.1); }
+.department-card:hover { border-color: #1e90ff; transform: translateY(-3.5px); box-shadow: 0 5px 15px rgba(30,144,255,0.1); }
 .department-card.selected { border-color: #1e90ff; background-color: #f0f8ff; }
 
 /* 医生卡片 (预约) */
