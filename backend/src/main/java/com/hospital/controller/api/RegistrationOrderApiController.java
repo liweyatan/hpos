@@ -203,7 +203,7 @@ public class RegistrationOrderApiController {
     }
 
     /**
-     * 获取医生某天可预约的时间段（排班减去已预约）
+     * 获取医生某天可预约的时间段（排班减去已预约，每小时限5人）
      */
     @GetMapping("/doctor/{doctorId}/available-slots")
     public ResponseEntity<Map<String, Object>> getAvailableSlots(
@@ -216,17 +216,25 @@ public class RegistrationOrderApiController {
             List<String> allSlots = doctorScheduleService.generateTimeSlots(doctorId, dayOfWeek);
 
             List<RegistrationOrder> booked = registrationOrderService.getRegistrationOrdersByDoctorId(doctorId);
-            List<String> bookedTimes = booked.stream()
-                .filter(o -> o.getRegisterTime() != null && !o.getStatus().equals("CANCELLED"))
-                .filter(o -> o.getRegisterTime().toLocalDate().equals(targetDate))
-                .map(o -> String.format("%02d:%02d", o.getRegisterTime().getHour(), o.getRegisterTime().getMinute()))
-                .collect(Collectors.toList());
 
+            Map<Integer, Long> hourCountMap = new java.util.HashMap<>();
+            for (RegistrationOrder o : booked) {
+                if (o.getRegisterTime() != null && !o.getStatus().equals("CANCELLED")
+                    && o.getRegisterTime().toLocalDate().equals(targetDate)) {
+                    int hour = o.getRegisterTime().getHour();
+                    hourCountMap.merge(hour, 1L, Long::sum);
+                }
+            }
+
+            int maxPerHour = 5;
             List<Map<String, Object>> slots = new ArrayList<>();
             for (String slot : allSlots) {
+                int hour = Integer.parseInt(slot.split(":")[0]);
+                long count = hourCountMap.getOrDefault(hour, 0L);
                 Map<String, Object> slotMap = new HashMap<>();
                 slotMap.put("time", slot);
-                slotMap.put("available", !bookedTimes.contains(slot));
+                slotMap.put("available", count < maxPerHour);
+                slotMap.put("remaining", (int)(maxPerHour - count));
                 slots.add(slotMap);
             }
             response.put("success", true);
