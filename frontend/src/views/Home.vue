@@ -167,6 +167,15 @@ export default {
       } catch (e) { /* ignore */ }
     }
   },
+  watch: {
+    'auth.loggedIn'(val) {
+      if (!val) {
+        this.nearestOrder = null
+      } else {
+        this.loadNearestOrder()
+      }
+    }
+  },
   mounted() {
     this.loadNearestOrder()
     this.loadDoctorCount()
