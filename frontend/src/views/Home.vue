@@ -14,7 +14,7 @@
           <div class="col-md-6">
             <div class="banner-info-item">
               <i class="fas fa-clock fa-3x mb-3"></i>
-              <h4 class="fw-bold mb-2">最近预约</h4>
+              <h4 class="fw-bold mb-2">即将就诊</h4>
               <template v-if="nearestOrder">
                 <p class="mb-1">{{ nearestOrder.doctorName || '医生' }}</p>
                 <p class="mb-0 fw-bold">{{ formatTimeLeft(nearestOrder.registerTime) }}后就诊</p>
